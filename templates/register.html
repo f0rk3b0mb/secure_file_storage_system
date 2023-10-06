@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Register</title>
+  </head>
+  <body>
+    <h1>Register</h1>
+    <div id="messages"></div>
+    <form id="registerForm" method="POST" action="/register">
+      <!-- Modified action attribute -->
+      <label for="username">Username:</label>
+      <input type="text" id="username" name="username" required /><br />
+      <label for="password">Password:</label>
+      <input type="password" id="password" name="password" required /><br />
+      <label for="confirmPassword">Confirm Password:</label>
+      <input
+        type="password"
+        id="confirmPassword"
+        name="confirm_password"
+        required
+      /><br />
+      <input type="submit" value="Register" />
+    </form>
+    <p>Already have an account? <a href="login">Login</a></p>
+
+    <script src="your_register_javascript.js"></script>
+  </body>
+</html>

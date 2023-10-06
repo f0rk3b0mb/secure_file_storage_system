@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Dashboard</title>
+  </head>
+  <body>
+    <ul id="fileList"></ul>
+    <script>
+      // Function to create a list item with both a link and a delete button
+      function addFileListItem(fileName) {
+        const fileList = document.getElementById("fileList");
+        const listItem = document.createElement("li");
+
+        // Create a link for downloading
+        const fileLink = document.createElement("a");
+        fileLink.href = `/api/download/${fileName}`;
+        fileLink.textContent = fileName;
+
+        // Create a delete button
+        const deleteButton = document.createElement("button");
+        deleteButton.textContent = "Delete";
+        deleteButton.addEventListener("click", () => deleteFile(fileName));
+
+        // Append the link and delete button to the list item
+        listItem.appendChild(fileLink);
+        listItem.appendChild(deleteButton);
+
+        // Append the list item to the list
+        fileList.appendChild(listItem);
+      }
+
+      // Fetch the list of files and create list items with links and delete buttons
+      function fetchFileList() {
+        fetch("api/viewFiles")
+          .then((response) => response.json())
+          .then((data) => {
+            const fileList = document.getElementById("fileList");
+            fileList.innerHTML = ""; // Clear the list
+
+            data.forEach((fileName) => {
+              addFileListItem(fileName);
+            });
+          });
+      }
+
+      // Delete a file by sending a POST request to /delete_file
+      function deleteFile(fileName) {
+        fetch("/api/deleteFiles", {
+          method: "POST",
+          body: new URLSearchParams({ file_name: fileName }),
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+        })
+          .then((response) => {
+            if (response.ok) {
+              fetchFileList(); // Refresh the file list after deletion
+            } else {
+              console.error("Failed to delete file");
+            }
+          })
+          .catch((error) => {
+            console.error("Error:", error);
+          });
+      }
+
+      // Initial fetch of the file list when the page loads
+      fetchFileList();
+    </script>
+  </body>
+</html>
