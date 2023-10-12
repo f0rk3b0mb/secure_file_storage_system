@@ -17,7 +17,7 @@ def index():
 @web.route("/dashboard")
 @login_required
 def dashboard():
-    return render_template("dashboard.html")
+    return render_template("dashboard.html", username=session['usename'])
 
 @web.route("/upload")
 @login_required
@@ -34,7 +34,7 @@ def login():
         user = User.query.filter_by(username=username).first()
         if user and bcrypt.check_password_hash(user.password, password):
             session["user_id"] = user.id
-            flash("You are now logged in!", "success")
+            session["usename"]= user.username
             return redirect(url_for("web.dashboard"))  # Redirect to the profile route
         else:
             return "Incorrect username or password"
@@ -118,7 +118,7 @@ def addUser():
     # Calculate the SHA-256 hash of the file
     sha256_hash = calculate_sha256(file_path)
 
-    return f"sha256sum is {sha256_hash}"
+    return render_template("upload.html",status=message)
     
 
 @api.route("/deleteFiles",methods=['POST'])
