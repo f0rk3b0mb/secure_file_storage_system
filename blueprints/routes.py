@@ -1,8 +1,12 @@
 from flask import Blueprint, render_template, redirect, url_for, request, flash, session ,jsonify
 import os
-from database import db, bcrypt , User
+from database import db, bcrypt , User , File , Permission
 from utils import calculate_sha256, encrypt_file , decrypt_file , login_required , admin_required
-
+import datetime
+#from itsdangerous import URLSafeTimedSerializer
+#
+# Initialize the serializer with a secret key  will import from main
+#serializer = URLSafeTimedSerializer(app.config["SECRET_KEY"])
 
 
 web = Blueprint('web', __name__)
@@ -17,7 +21,7 @@ def index():
 @web.route("/dashboard")
 @login_required
 def dashboard():
-    return render_template("dashboard.html", username=session['usename'])
+    return render_template("dashboard.html", username=session['username'])
 
 @web.route("/upload")
 @login_required
@@ -34,7 +38,7 @@ def login():
         user = User.query.filter_by(username=username).first()
         if user and bcrypt.check_password_hash(user.password, password):
             session["user_id"] = user.id
-            session["usename"]= user.username
+            session["username"]= user.username
             return redirect(url_for("web.dashboard"))  # Redirect to the profile route
         else:
             return "Incorrect username or password"
@@ -51,14 +55,19 @@ def register():
         # Check if the username is already taken
         existing_user = User.query.filter_by(username=username).first()
         if existing_user:
-            flash("Username already taken. Please choose another username.", "danger")
+            return "Username already taken. Please choose another username."
         else:
             # Hash the password and create a new user
             hashed_password = bcrypt.generate_password_hash(password).decode("utf-8")
             new_user = User(username=username, password=hashed_password)
             db.session.add(new_user)
             db.session.commit()
-            flash("Your account has been created! You can now log in.", "success")
+
+            #create a users folder
+            user_folder = os.path.join("uploads", username)
+            os.makedirs(user_folder, exist_ok=True)
+
+
             return redirect(url_for("web.login"))  # Redirect to the login route
 
     return render_template("register.html")
@@ -82,7 +91,10 @@ def logout():
 @web.route("/admin")
 @admin_required  # Apply the decorator to protect this admin route
 def admin():
-    return render_template("admin.html") 
+    user = User.query.all()
+    files = File.query.all()
+
+    return render_template("admin.html", users= user, files=files) 
 
 
 
@@ -91,7 +103,7 @@ def admin():
 @login_required
 def viewFile():
      # List files in the 'uploads' directory
-    upload_dir = 'uploads'
+    upload_dir = 'uploads/'+session['username']
     file_names = os.listdir(upload_dir)
     return jsonify(file_names)
     
@@ -99,7 +111,7 @@ def viewFile():
 
 @api.route("/addFiles", methods=['POST'])
 @login_required
-def addUser():
+def addFiles():
     if 'file' not in request.files:
         return 'No file part'
 
@@ -108,8 +120,8 @@ def addUser():
     if file.filename == '':
         return 'No selected file'
 
-    # Save the file in the 'uploads' directory
-    file_path = os.path.join('uploads', file.filename)
+    # Save the file in the 'uploads/username' directory
+    file_path = os.path.join('uploads/',session['username'], file.filename)
     file.save(file_path)
 
     #encrypt file
@@ -118,7 +130,12 @@ def addUser():
     # Calculate the SHA-256 hash of the file
     sha256_hash = calculate_sha256(file_path)
 
-    return render_template("upload.html",status=message)
+    new_file = File(owner_id=session['user_id'],file_name=file.filename, file_path=file_path,upload_date=datetime.datetime.now(),file_size=file.content_length,sha256sum=sha256_hash)
+    db.session.add(new_file)
+    db.session.commit()
+
+
+    return render_template("upload.html",status=sha256_hash)
     
 
 @api.route("/deleteFiles",methods=['POST'])
@@ -127,7 +144,7 @@ def deleteFile():
     file_name = request.form.get('file_name')
 
     if file_name:
-        file_path = os.path.join('uploads', file_name)
+        file_path = os.path.join('uploads',session['username'], file_name)
 
         if os.path.exists(file_path):
             os.remove(file_path)
@@ -139,7 +156,7 @@ def deleteFile():
 @api.route('/download/<file_name>')
 @login_required
 def download_file(file_name):
-    file_path = os.path.join('uploads', file_name)
+    file_path = os.path.join('uploads',session['username'], file_name)
 
     # Decrypt the file and get the Flask response
     success, response = decrypt_file(file_path)
@@ -147,4 +164,50 @@ def download_file(file_name):
     if success:
         return response
     else:
-        return f'Failed to decrypt the file'
+        return f'Failed to decrypt the file {response}'
+
+
+# TO-DO
+
+
+# Route for requesting a password reset
+#@web.route("/forgot_password", methods=["GET", "POST"])
+#def forgot_password():
+#    if request.method == "POST":
+#        username_or_email = request.form.get("username_or_email")
+#        user = User.query.filter((User.username == username_or_email) | (User.email == username_or_email)).first()
+#        
+#        if user:
+#            # Generate a token for password reset
+#            token = serializer.dumps(user.username, salt='password-reset')
+#            
+#            # Send an email with a link containing the token
+#            # Use Flask-Mail or another email library to send the email
+#            send_password_reset_email(user.email, token)
+#
+#        flash("If the provided email/username exists, you will receive an email with instructions to reset your password.", "info")
+#
+#    return render_template("forgot_password.html")
+#
+## Route for resetting the password
+#@web.route("/reset_password/<token>", methods=["GET", "POST"])
+#def reset_password(token):
+#    try:
+#        # Verify and decode the token
+#        username = serializer.loads(token, salt='password-reset', max_age=3600)
+#        user = User.query.filter_by(username=username).first()
+#    except Exception:
+#        flash("The reset link is invalid or has expired.", "danger")
+#        return redirect(url_for("web.login"))
+#
+#    if request.method == "POST":
+#        new_password = request.form.get("new_password")
+#        hashed_password = bcrypt.generate_password_hash(new_password).decode("utf-8")
+#        user.password = hashed_password
+#        db.session.commit()
+#
+#        flash("Your password has been reset. You can now log in with your new password.", "success")
+#        return redirect(url_for("web.login"))
+#
+#    return render_template("reset_password.html")
+#

@@ -6,7 +6,7 @@ app = Flask(__name__)
 
 # Load your Flask app configuration here
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///site.db'
-app.secret_key = 'your_secret_key_here'
+app.secret_key = 'IAMTHEADMIN'
 
 # Initialize Flask extensions
 db.init_app(app)

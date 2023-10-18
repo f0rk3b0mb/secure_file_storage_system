@@ -95,7 +95,7 @@ def admin_required(func):
             return redirect(url_for("web.login"))
 
         if user.username != "admin":
-            return "You do not have permission to view this page"
+            return "Only admin is allowed to perform this action"
 
         return func(*args, **kwargs)
     return decorated_function
