@@ -31,44 +31,52 @@ def upload():
 @web.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
-        username = request.form.get("username")
+        email = request.form.get("email")
         password = request.form.get("password")
         
         # Check if the user exists
-        user = User.query.filter_by(username=username).first()
-        if user and bcrypt.check_password_hash(user.password, password):
-            session["user_id"] = user.id
-            session["username"]= user.username
-            return redirect(url_for("web.dashboard"))  # Redirect to the profile route
+        user = User.query.filter_by(email=email).first()
+        if user:
+            # Check if the user is approved
+            if user.is_approved:
+                if bcrypt.check_password_hash(user.password, password):
+                    session["user_id"] = user.id
+                    session["username"] = user.username
+                    session["role"] = user.role
+                    if user.role == "admin":
+                        return redirect(url_for("web.admin"))
+                    else:
+                        return redirect(url_for("web.dashboard"))  # Redirect to the profile route
+                else:
+                    return "Incorrect username or password"
+            else:
+                return render_template("login.html", message="Await admin approval")
         else:
-            return "Incorrect username or password"
+            return "User not found"
 
     return render_template("login.html")
 
+
 @web.route("/register", methods=["GET", "POST"])
-@admin_required
 def register():
     if request.method == "POST":
         username = request.form.get("username")
         password = request.form.get("password")
+        email = request.form.get("email")
+        role = request.form.get("role")
+
 
         # Check if the username is already taken
-        existing_user = User.query.filter_by(username=username).first()
+        existing_user = User.query.filter_by(email=email).first()
         if existing_user:
             return "Username already taken. Please choose another username."
         else:
             # Hash the password and create a new user
             hashed_password = bcrypt.generate_password_hash(password).decode("utf-8")
-            new_user = User(username=username, password=hashed_password)
+            new_user = User(username=username, password=hashed_password , email=email, role="user", is_approved="False")
             db.session.add(new_user)
             db.session.commit()
-
-            #create a users folder
-            user_folder = os.path.join("uploads", username)
-            os.makedirs(user_folder, exist_ok=True)
-
-
-            return redirect(url_for("web.login"))  # Redirect to the login route
+            return "Await admin approval"  # Redirect to the login route
 
     return render_template("register.html")
 
@@ -84,8 +92,9 @@ def profile():
 
 @web.route("/logout")
 def logout():
-    session.pop("user_id", None)
-    flash("You have been logged out.", "success")
+    session.pop("user_id",None)
+    session.pop("username",None)
+    session.pop("role",None)
     return redirect(url_for("web.login")) 
 
 @web.route("/admin")
@@ -94,7 +103,7 @@ def admin():
     user = User.query.all()
     files = File.query.all()
 
-    return render_template("admin.html", users= user, files=files) 
+    return render_template("admin.html", username= session["username"]) 
 
 
 
@@ -130,7 +139,7 @@ def addFiles():
     # Calculate the SHA-256 hash of the file
     sha256_hash = calculate_sha256(file_path)
 
-    new_file = File(owner_id=session['user_id'],file_name=file.filename, file_path=file_path,upload_date=datetime.datetime.now(),file_size=file.content_length,sha256sum=sha256_hash)
+    new_file = File(owner_id=session['user_id'],file_name=file.filename, file_path=file_path,upload_date=datetime.datetime.now(),file_size=file.content_length,sha256sum=sha256_hash,is_pending_deletion="False")
     db.session.add(new_file)
     db.session.commit()
 
@@ -138,19 +147,25 @@ def addFiles():
     return render_template("upload.html",status=sha256_hash)
     
 
-@api.route("/deleteFiles",methods=['POST'])
+@api.route("/deleteFiles", methods=["POST"])
 @login_required
-def deleteFile():
-    file_name = request.form.get('file_name')
+def delete_file():
+    file_name = request.form.get("file_name")
 
     if file_name:
-        file_path = os.path.join('uploads',session['username'], file_name)
+        file_path = os.path.join("uploads", session["username"], file_name)
 
         if os.path.exists(file_path):
-            os.remove(file_path)
-            return f'File {file_name} has been deleted'
+            # Mark the file as pending for deletion in the database
+            file = File.query.filter_by(file_name=file_name).first()
 
-    return 'File not found or could not be deleted'
+            if file:
+                file.is_pending_deletion = "True"
+                db.session.commit()
+                return "Deletion of file pending approval"
+            else:
+                return "File not found or could not be marked for deletion in the database"
+
 
 
 @api.route('/download/<file_name>')
@@ -165,6 +180,120 @@ def download_file(file_name):
         return response
     else:
         return f'Failed to decrypt the file {response}'
+
+##admin functionaties
+
+
+
+@api.route('/pending_users', methods=['GET'])
+@admin_required
+def get_pending_users():
+    # Query the database to get pending user registrations
+    pending_users = User.query.filter_by(is_approved="False").all()
+    # Create a list to store user details
+    pending_user_details = []
+
+    for user in pending_users:
+        user_detail = {
+            'id': user.id,
+            'username': user.username,
+            'email': user.email,
+            'role': user.role,
+        }
+        pending_user_details.append(user_detail)
+
+    # Return the pending user details in JSON format using jsonify
+    return jsonify(pending_user_details)
+
+@api.route("/pending_deletion_requests", methods=["GET"])
+@admin_required
+def get_pending_deletion_requests():
+    # Find all files that are pending deletion
+    pending_deletion_files = File.query.filter_by(is_pending_deletion="True").all()
+    
+    # Check if there are pending deletion files
+    if pending_deletion_files:
+        # Extract file names from the list of pending deletion files
+        pending_files_data = [{"file_name": file.file_name} for file in pending_deletion_files]
+        return jsonify(pending_files_data)
+    else:
+        return jsonify({"message": "No files pending deletion."})
+
+
+@api.route("/approve_deletion/<string:file_name>", methods=["POST"])
+@admin_required
+def approve_deletion(file_name):
+    # Find the file by name
+    file = File.query.filter_by(file_name=file_name).first()
+
+    if file and file.is_pending_deletion:
+        # Perform the actual file deletion
+        # Here, you can add code to delete the file from the file system
+        # For example, if you're using the os module, you can do:
+        
+        os.remove(file.file_path)
+
+        # Delete the file record from the database
+        db.session.delete(file)
+        db.session.commit()
+
+        return jsonify({"message": "File deleted and record removed."})
+    else:
+        return jsonify({"message": "File not found or not pending deletion."})
+
+
+
+
+@api.route('/approve_user/<int:user_id>', methods=['POST'])
+@admin_required
+def approve_user(user_id):
+    # Check if the request is a POST request
+    if request.method == 'POST':
+        # Find the user by ID
+        user = User.query.get(user_id)
+        
+        if user:
+            # Mark the user as approved
+            user.is_approved = "True"
+            db.session.commit()
+            user_folder = os.path.join("uploads", user.username)
+            os.makedirs(user_folder, exist_ok=True)
+            return jsonify({'message': 'User has been approved.'}), 200
+        else:
+            return jsonify({'error': 'User not found.'}), 404
+
+    return jsonify({'error': 'Invalid request method.'}), 405
+
+
+from flask import request
+
+@web.route("/users", methods=["GET", "POST"])
+@admin_required
+def manage_users():
+    if request.method == "POST":
+        # Handle the user deletion based on the submitted form data
+        user_id_to_delete = request.form.get("user_id_to_delete")
+        
+        # Check if the user_id_to_delete is valid (e.g., exists and is not the admin)
+        user_to_delete = User.query.get(user_id_to_delete)
+        if user_to_delete and user_to_delete.role != "admin":
+            db.session.delete(user_to_delete)
+            db.session.commit()
+
+            # Redirect to the same page after user deletion
+            return redirect(url_for("web.manage_users"))
+
+    # Retrieve a list of all users from the database
+    users = User.query.all()
+
+    return render_template("users.html", users=users)
+
+@web.route("/files", methods=["GET"])
+@admin_required
+def files():
+    files = File.query.all()
+
+    return render_template("files.html", files=files)
 
 
 # TO-DO

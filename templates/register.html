@@ -7,21 +7,27 @@
     <h1>Register</h1>
     <div id="messages"></div>
     <form id="registerForm" method="POST" action="/register">
-      <!-- Modified action attribute -->
+      <label for="email">Email:</label>
+      <input type="email" id="email" name="email" required /><br /><br />
       <label for="username">Username:</label>
       <input type="text" id="username" name="username" required /><br />
       <label for="password">Password:</label>
-      <input type="password" id="password" name="password" required /><br />
+      <input type="password" id="password" name="password" required />
+      <input type="checkbox" id="showPassword" />
+      <p id="password-feedback" class="text-danger"></p>
+      <!-- Add feedback element -->
+      <br />
       <label for="confirmPassword">Confirm Password:</label>
       <input
         type="password"
         id="confirmPassword"
         name="confirm_password"
         required
-      /><br />
+      /><br /><br /><br /><br />
       <input type="submit" value="Register" />
     </form>
+    <a href="/login">login</a>
 
-    <script src="your_register_javascript.js"></script>
+    <script src="static/js/main.js"></script>
   </body>
 </html>

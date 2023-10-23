@@ -4,15 +4,15 @@
     <title>Dashboard</title>
   </head>
   <body bgcolor="cyan">
-  </br>
-  <a href="/admin">admin page</a><br><a href="/upload">upload files</a><br><a href="/logout">logout</a><br><a href="/register">register</a>
-  <br>
+    </br>
+    <a href="/upload">upload files</a><br><a href="/logout">logout</a><br><a href="/register">register</a>
+    <br>
     <h1><center>Welcome, {{username}}</h1></center></h1>
-</br>
+    </br>
     <h3>YOUR FILES</h3>
     <ul id="fileList"></ul>
     <script>
-      // Function to create a list item with both a link and a delete button
+      // Function to create a list item with both a link and a request button
       function addFileListItem(fileName) {
         const fileList = document.getElementById("fileList");
         const listItem = document.createElement("li");
@@ -22,20 +22,20 @@
         fileLink.href = `/api/download/${fileName}`;
         fileLink.textContent = fileName;
 
-        // Create a delete button
-        const deleteButton = document.createElement("button");
-        deleteButton.textContent = "Delete";
-        deleteButton.addEventListener("click", () => deleteFile(fileName));
+        // Create a request button
+        const requestButton = document.createElement("button");
+        requestButton.textContent = "Request Deletion";
+        requestButton.addEventListener("click", () => requestDelete(fileName));
 
-        // Append the link and delete button to the list item
+        // Append the link and request button to the list item
         listItem.appendChild(fileLink);
-        listItem.appendChild(deleteButton);
+        listItem.appendChild(requestButton);
 
         // Append the list item to the list
         fileList.appendChild(listItem);
       }
 
-      // Fetch the list of files and create list items with links and delete buttons
+      // Fetch the list of files and create list items with links and request buttons
       function fetchFileList() {
         fetch("api/viewFiles")
           .then((response) => response.json())
@@ -49,8 +49,8 @@
           });
       }
 
-      // Delete a file by sending a POST request to /delete_file
-      function deleteFile(fileName) {
+      // Send a request for file deletion
+      function requestDelete(fileName) {
         fetch("/api/deleteFiles", {
           method: "POST",
           body: new URLSearchParams({ file_name: fileName }),
@@ -60,9 +60,9 @@
         })
           .then((response) => {
             if (response.ok) {
-              fetchFileList(); // Refresh the file list after deletion
+              alert("Your deletion request has been sent to the admin for approval.");
             } else {
-              console.error("Failed to delete file");
+              console.error("Failed to send deletion request");
             }
           })
           .catch((error) => {

@@ -10,6 +10,7 @@ class User(db.Model):
     password = db.Column(db.String(60), nullable=False)
     email= db.Column(db.String(50))
     role = db.Column(db.String(50))
+    is_approved= db.Column(db.String(10))
 
 class File(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -19,6 +20,7 @@ class File(db.Model):
     upload_date = db.Column(db.String(60))
     file_size= db.Column(db.String(60))
     sha256sum= db.Column(db.Integer)
+    is_pending_deletion = db.Column(db.String(10))
     # ... Other file-related columns ...
 
 class Permission(db.Model):

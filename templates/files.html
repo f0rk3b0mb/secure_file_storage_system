@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Manage Files</title>
+  </head>
+  <body bgcolor="cyan">
+    <h1>Manage Files</h1>
+
+    <table border="1">
+      <thead>
+        <tr>
+          <th>File Name</th>
+          <th>sha256sum</th>
+          <th>owner_id</th>
+          <th>upload_date</th>
+          <th>deletion_status</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for file in files %}
+        <tr>
+          <td>{{ file.file_name }}</td>
+          <td>{{ file.sha256sum }}</td>
+          <td>{{ file.owner_id }}</td>
+          <td>{{ file.upload_date }}</td>
+          <td>{{ file.is_pending_deletion }}</td>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </body>
+</html>
