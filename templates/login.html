@@ -2,6 +2,9 @@
 <html>
   <head>
     <title>Login</title>
+    <link rel="stylesheet" type="text/css" href="/static/css/login.css" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   </head>
   <body bgcolor="cyan">
     <h1>Login</h1>
@@ -9,16 +12,23 @@
     <div id="messages"></div>
     <form id="loginForm" method="POST" action="/login">
       <!-- Modified action attribute -->
-      <label for="email">Email:</label>
-      <input type="text" id="email" name="email" required /><br />
-      <label for="password">Password:</label>
-      <input type="password" id="password" name="password" required /><br />
+      <input
+        type="text"
+        id="email"
+        name="email"
+        placeholder="email or username"
+        required
+      /><br />
+      <input
+        type="password"
+        id="password"
+        name="password"
+        placeholder="password"
+        required
+      /><br />
       <input id="submit" type="submit" value="Login" />
     </form>
-    <br />
-    <br />
-    <a href="register">register</a>
-
+    <a href="register">Register??</a>
     <script src="main.js"></script>
   </body>
 </html>

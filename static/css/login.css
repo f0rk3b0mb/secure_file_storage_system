@@ -1,0 +1,19 @@
+body {
+  display: flex;
+  width: 640px;
+  padding: 3px 102px 0px 102px;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 5px;
+  background: #483ea8;
+}
+
+input {
+  padding: 5px;
+  margin: 10px;
+}
+
+a {
+  color: green;
+}

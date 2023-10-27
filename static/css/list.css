@@ -1,0 +1,15 @@
+body {
+  display: flex;
+  width: 640px;
+  padding: 2px 102px 0px 102px;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 5px;
+  background: #483ea8;
+}
+
+table {
+  border-collapse: collapse;
+  margin-left: 60px;
+}

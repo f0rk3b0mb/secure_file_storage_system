@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, redirect, url_for, request, flash, session ,jsonify
 import os
-from database import db, bcrypt , User , File , Permission
+from database import db, bcrypt , User , File
 from utils import calculate_sha256, encrypt_file , decrypt_file , login_required , admin_required
 import datetime
 #from itsdangerous import URLSafeTimedSerializer
@@ -35,7 +35,8 @@ def login():
         password = request.form.get("password")
         
         # Check if the user exists
-        user = User.query.filter_by(email=email).first()
+        user = User.query.filter((User.username == email) | (User.email == email)).first()
+
         if user:
             # Check if the user is approved
             if user.is_approved:
@@ -52,7 +53,7 @@ def login():
             else:
                 return render_template("login.html", message="Await admin approval")
         else:
-            return "User not found"
+            return render_template("login.html", message="Incorrect username or password")
 
     return render_template("login.html")
 
@@ -125,6 +126,7 @@ def addFiles():
         return 'No file part'
 
     file = request.files['file']
+    permission_level= request.form.get("permission_level")
 
     if file.filename == '':
         return 'No selected file'
@@ -139,7 +141,7 @@ def addFiles():
     # Calculate the SHA-256 hash of the file
     sha256_hash = calculate_sha256(file_path)
 
-    new_file = File(owner_id=session['user_id'],file_name=file.filename, file_path=file_path,upload_date=datetime.datetime.now(),file_size=file.content_length,sha256sum=sha256_hash,is_pending_deletion="False")
+    new_file = File(owner_id=session['user_id'],file_name=file.filename, file_path=file_path,upload_date=datetime.datetime.now(),file_size=file.content_length,sha256sum=sha256_hash,is_pending_deletion="False",permission_level=permission_level)
     db.session.add(new_file)
     db.session.commit()
 

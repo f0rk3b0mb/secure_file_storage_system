@@ -1,0 +1,30 @@
+body {
+  display: flex;
+  width: 640px;
+  padding: 2px 102px 0px 102px;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 5px;
+  background: #483ea8;
+}
+
+link_bar {
+  display: flex;
+  flex-direction: row;
+}
+
+table {
+  border-collapse: collapse;
+}
+
+button1 {
+  margin: 10px;
+  border-radius: 10px;
+  background-color: black;
+  padding: 5px;
+}
+
+a {
+  color: green;
+}

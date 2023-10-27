@@ -2,14 +2,17 @@
 <html>
   <head>
     <title>Dashboard</title>
+    <link rel="stylesheet" type="text/css" href="/static/css/dashboard.css" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   </head>
   <body bgcolor="cyan">
-    </br>
-    <a href="/upload">upload files</a><br><a href="/logout">logout</a><br><a href="/register">register</a>
-    <br>
-    <h1><center>Welcome, {{username}}</h1></center></h1>
-    </br>
-    <h3>YOUR FILES</h3>
+    <link_bar
+      ><button1><a href="/upload">upload files</a></button1
+      ><button1><a href="/logout">logout</a></button1></link_bar
+    >
+    <h3><center>Welcome, {{username}}</center></h3>
+    <h5>Your uploaded files:</h5>
     <ul id="fileList"></ul>
     <script>
       // Function to create a list item with both a link and a request button
@@ -60,7 +63,9 @@
         })
           .then((response) => {
             if (response.ok) {
-              alert("Your deletion request has been sent to the admin for approval.");
+              alert(
+                "Your deletion request has been sent to the admin for approval."
+              );
             } else {
               console.error("Failed to send deletion request");
             }

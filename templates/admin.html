@@ -2,101 +2,84 @@
 <html>
 <head>
     <title>Admin Dashboard</title>
+    <link rel="stylesheet" type="text/css" href="/static/css/admin.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body bgcolor="cyan">
 <br>
-<a href="/dashboard">user dashboard</a><br>
-<a href="/upload">upload files</a><br>
-<a href="/logout">logout</a><br>
-<a href="/register">register</a><br>
-<a href="/users">users</a><br>
-<a href="/files">files</a>
+<link_bar>
+<button1><a href="/dashboard">user dashboard</a></button1>
+<button1><a href="/upload">upload files</a></button1>
+<button1><a href="/logout">logout</a></button1>
+<button1><a href="/register">register</a></button1>
+<button1><a href="/users">users</a></button1>
+<button1><a href="/files">files</a></button1>
+</link_bar>
 <br>
 <h1><center>Welcome, {{ username }}</h1></center></h1>
-<br>
 
-<!-- Display pending users here -->
-<h2>Pending Deletion Requests</h2>
-    <table border="1">
-      <thead>
-        <tr>
-          <th>File Name</th>
-          <th>Action</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for file in pending_deletion_requests %}
-          <tr>
-            <td>{{ file.file_name }}</td>
-            <td>
-              <button onclick="approveDeletion('{{ file.file_name }}')">Approve</button>
-            </td>
-          </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-    <br>
-    <br>
-    <h2>Pending Users</h2>
+<h5><u>Pending User Approvals</u></h5>
 <table border="1">
     <thead>
         <tr>
             <th>Username</th>
-            <th>Email</th>
-            <th>Role</th>
             <th>Action</th>
         </tr>
     </thead>
-    <tbody>
-        {% for user in pending_users %}
-            <tr>
-                <td>{{ user.username }}</td>
-                <td>{{ user.email }}</td>
-                <td>{{ user.role }}</td>
-                <td>
-                    <button onclick="approveUser('{{ user.id }}')">Approve</button>
-                </td>
-            </tr>
-        {% endfor %}
+    <tbody id="pendingUserApprovals">
     </tbody>
 </table>
-<br>
-<br>
+
+<h5><u>Pending File Deletion</u></h5>
+<table border="1">
+    <thead>
+        <tr>
+            <th>File Name</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody id="pendingFileDeletionApprovals">
+    </tbody>
+</table>
 
 <script>
-  // Function to fetch and display pending users
-  function displayPendingUsers() {
+  // Function to fetch and display pending user approvals
+  function displayPendingUserApprovals() {
       fetch('/api/pending_users')
           .then(response => response.json())
           .then(data => {
-              const table = document.querySelector('table tbody');
-              table.innerHTML = ''; // Clear the existing table rows
+              const pendingUserApprovals = document.getElementById('pendingUserApprovals');
+              pendingUserApprovals.innerHTML = ''; // Clear the existing content
 
-              data.forEach(user => {
-                  const row = table.insertRow(table.rows.length);
-                  const usernameCell = row.insertCell(0);
-                  const emailCell = row.insertCell(1);
-                  const roleCell = row.insertCell(2);
-                  const actionCell = row.insertCell(3);
-                  usernameCell.innerHTML = user.username;
-                  emailCell.innerHTML = user.email;
-                  roleCell.innerHTML = user.role;
-                  actionCell.innerHTML = `<button onclick="approveUser('${user.id}')">Approve</button>`;
-              });
+              if (data.length === 0) {
+                  const row = pendingUserApprovals.insertRow(0);
+                  const cell = row.insertCell(0);
+                  cell.colSpan = 2;
+                  cell.textContent = 'No pending user approvals.';
+              } else {
+                  data.forEach(user => {
+                      const row = pendingUserApprovals.insertRow(pendingUserApprovals.rows.length);
+                      const usernameCell = row.insertCell(0);
+                      usernameCell.textContent = user.username;
+                      const actionCell = row.insertCell(1);
+                      const approveButton = document.createElement('button');
+                      approveButton.textContent = 'Approve';
+                      approveButton.addEventListener('click', () => approveUser(user.id));
+                      actionCell.appendChild(approveButton);
+                  });
+              }
           });
   }
 
-  // Initial display of pending users
-  displayPendingUsers();
-
-  // JavaScript function to approve a user
+  // Function to send an approval request for a user
   function approveUser(userId) {
-      // You can make an API call to approve the user by sending a request to the server
+      // Send a POST request to approve the user
       fetch(`/api/approve_user/${userId}`, { method: 'POST' })
           .then(response => {
               if (response.status === 200) {
-                  // Display updated list of pending users
-                  displayPendingUsers();
+                  // Display updated list of pending user approvals
+                  displayPendingUserApprovals();
                   // Optionally, you can update the UI to indicate that the user has been approved
                   alert('User approved successfully');
               } else {
@@ -104,44 +87,55 @@
               }
           });
   }
-    // Function to fetch and display pending deletion requests
-    function displayPendingDeletionRequests() {
-        fetch('/api/pending_deletion_requests')
+
+  // Function to fetch and display pending file deletion approvals
+  function displayPendingFileDeletionApprovals() {
+      fetch('/api/pending_deletion_requests')
           .then(response => response.json())
           .then(data => {
-            const table = document.querySelector('table tbody');
-            table.innerHTML = ''; // Clear the existing table rows
+              const pendingFileDeletionApprovals = document.getElementById('pendingFileDeletionApprovals');
+              pendingFileDeletionApprovals.innerHTML = ''; // Clear the existing content
 
-            data.forEach(file => {
-              const row = table.insertRow(table.rows.length);
-              const fileNameCell = row.insertCell(0);
-              const actionCell = row.insertCell(1);
-              fileNameCell.innerHTML = file.file_name;
-              actionCell.innerHTML = `<button onclick="approveDeletion('${file.file_name}')">Approve</button>`;
-            });
+              if (data.length === 0) {
+                  const row = pendingFileDeletionApprovals.insertRow(0);
+                  const cell = row.insertCell(0);
+                  cell.colSpan = 2;
+                  cell.textContent = 'No pending file deletion approvals.';
+              } else {
+                  data.forEach(file => {
+                      const row = pendingFileDeletionApprovals.insertRow(pendingFileDeletionApprovals.rows.length);
+                      const fileNameCell = row.insertCell(0);
+                      fileNameCell.textContent = file.file_name;
+                      const actionCell = row.insertCell(1);
+                      const approveButton = document.createElement('button');
+                      approveButton.textContent = 'Approve';
+                      approveButton.addEventListener('click', () => approveDeletion(file.file_name));
+                      actionCell.appendChild(approveButton);
+                  });
+              }
           });
-      }
+  }
 
-      // Initial display of pending deletion requests
-      displayPendingDeletionRequests();
-
-      // JavaScript function to approve a file deletion request
-      function approveDeletion(fileName) {
-        // You can make an API call to approve the file deletion by sending a request to the server
-        fetch(`/api/approve_deletion/${fileName}`, { method: 'POST' })
+  // Function to send an approval request for file deletion
+  function approveDeletion(fileName) {
+      // Send a POST request to approve file deletion
+      fetch(`/api/approve_deletion/${fileName}`, { method: 'POST' })
           .then(response => {
-            if (response.status === 200) {
-              // Display updated list of pending deletion requests
-              displayPendingDeletionRequests();
-              // Optionally, you can update the UI to indicate that the deletion request has been approved
-              alert('Deletion request approved successfully');
-            } else {
-              alert('Failed to approve deletion request');
-            }
+              if (response.status === 200) {
+                  // Display updated list of pending file deletion approvals
+                  displayPendingFileDeletionApprovals();
+                  // Optionally, you can update the UI to indicate that the deletion request has been approved
+                  alert('Deletion request approved successfully');
+              } else {
+                  alert('Failed to approve deletion request');
+              }
           });
-      }
-</script>
+  }
 
+  // Initial display of pending approvals
+  displayPendingUserApprovals();
+  displayPendingFileDeletionApprovals();
+</script>
 
 </body>
 </html>

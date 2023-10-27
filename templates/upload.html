@@ -2,13 +2,15 @@
 <html>
   <head>
     <title>File Upload Page</title>
+    <link rel="stylesheet" type="text/css" href="/static/css/upload.css" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   </head>
-  <body bgcolor="cyan">
-    <h1>Upload a File</h1>
+  <body>
+    <button1><a href="/dashboard">dashboard</a></button1>
+    <h1 id="title">Upload a File</h1>
     <br />
-    <a href="/dashboard">dashboard</a>
-    <br />
-    <br />
+    <h3>{{status}}</h3>
     <form
       id="uploadForm"
       action="/api/addFiles"
@@ -16,10 +18,17 @@
       enctype="multipart/form-data"
     >
       <input type="file" name="file" />
+      <br />
+      <br />
+      <label for="permission_level">Select permission level:</label>
+      <select name="permission_level" id="permission_level">
+        <option value="1">Private</option>
+        <option value="2">Public</option>
+        <option value="3">Everyone</option>
+      </select>
+      <br /><br />
       <button type="submit">Upload</button>
+      <br />
     </form>
-    <br />
-    <br />
-    <h3>{{status}}</h3>
   </body>
 </html>
