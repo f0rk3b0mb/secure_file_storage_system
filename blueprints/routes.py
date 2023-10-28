@@ -39,7 +39,7 @@ def login():
 
         if user:
             # Check if the user is approved
-            if user.is_approved:
+            if user.is_approved == "True":
                 if bcrypt.check_password_hash(user.password, password):
                     session["user_id"] = user.id
                     session["username"] = user.username
@@ -49,7 +49,7 @@ def login():
                     else:
                         return redirect(url_for("web.dashboard"))  # Redirect to the profile route
                 else:
-                    return "Incorrect username or password"
+                    return render_template("login.html", message="Incorrect username or password")
             else:
                 return render_template("login.html", message="Await admin approval")
         else:
@@ -77,7 +77,7 @@ def register():
             new_user = User(username=username, password=hashed_password , email=email, role="user", is_approved="False")
             db.session.add(new_user)
             db.session.commit()
-            return "Await admin approval"  # Redirect to the login route
+            return render_template("login.html", message="Await admin approval") # Redirect to the login route
 
     return render_template("register.html")
 
@@ -278,9 +278,15 @@ def manage_users():
         
         # Check if the user_id_to_delete is valid (e.g., exists and is not the admin)
         user_to_delete = User.query.get(user_id_to_delete)
+        user_to_delete_files = File.query.filter_by(owner_id=user_id_to_delete)
         if user_to_delete and user_to_delete.role != "admin":
             db.session.delete(user_to_delete)
             db.session.commit()
+            #db.session.delete(user_to_delete_files)
+            #db.session.commit
+            #user_folder = os.path.join("uploads", user_to_delete.username)
+            #os.rmdir(user_folder, exist_ok=True)
+            
 
             # Redirect to the same page after user deletion
             return redirect(url_for("web.manage_users"))
@@ -297,6 +303,12 @@ def files():
 
     return render_template("files.html", files=files)
 
+## backup
+
+@web.route("/backup", methods=["GET"])
+@admin_required
+def backup():
+    return "backup"
 
 # TO-DO
 

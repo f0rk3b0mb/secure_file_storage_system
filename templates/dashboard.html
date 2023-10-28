@@ -7,11 +7,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   </head>
   <body bgcolor="cyan">
-    <link_bar
-      ><button1><a href="/upload">upload files</a></button1
-      ><button1><a href="/logout">logout</a></button1></link_bar
-    >
-    <h3><center>Welcome, {{username}}</center></h3>
+    <div class="top_bar">
+      <h3>Welcome, {{username}}</h3>
+      <link_bar
+        ><button1><a href="/upload">upload files</a></button1
+        ><button1><a href="/logout">logout</a></button1></link_bar
+      >
+    </div>
     <h5>Your uploaded files:</h5>
     <ul id="fileList"></ul>
     <script>

@@ -1,12 +1,22 @@
 body {
   display: flex;
-  width: 640px;
   padding: 3px 102px 0px 102px;
   flex-direction: column;
   justify-content: flex-end;
   align-items: center;
   gap: 5px;
-  background: #483ea8;
+  background: skyblue;
+}
+
+.top_bar {
+  background-color: lightblue;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  border-radius: 15px;
+  padding: 5px;
+  align-items: center;
 }
 
 link_bar {
@@ -17,10 +27,15 @@ link_bar {
 button1 {
   margin: 10px;
   border-radius: 10px;
-  background-color: black;
+  background-color: lightblue;
   padding: 5px;
 }
 
 a {
-  color: green;
+  color: black;
+}
+
+button {
+  background-color: red;
+  border-radius: 5px;
 }

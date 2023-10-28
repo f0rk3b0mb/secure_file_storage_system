@@ -7,17 +7,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body bgcolor="cyan">
-<br>
+<div class="top_bar">
+<h3><center>Welcome, {{ username }}</h1></center></h3>
 <link_bar>
-<button1><a href="/dashboard">user dashboard</a></button1>
+<button1><a href="/dashboard">dashboard</a></button1>
 <button1><a href="/upload">upload files</a></button1>
 <button1><a href="/logout">logout</a></button1>
 <button1><a href="/register">register</a></button1>
 <button1><a href="/users">users</a></button1>
 <button1><a href="/files">files</a></button1>
+<button1><a href="/backup">backup</a></button1>
 </link_bar>
-<br>
-<h1><center>Welcome, {{ username }}</h1></center></h1>
+</div>
 
 <h5><u>Pending User Approvals</u></h5>
 <table border="1">

@@ -95,7 +95,10 @@ def admin_required(func):
             return redirect(url_for("web.login"))
 
         if session.get("role") != "admin":
-            return "Only admin is allowed to perform this action"
+            return "Only admin is required to access this page"
 
         return func(*args, **kwargs)
     return decorated_function
+
+def backup():
+    print("backup")
