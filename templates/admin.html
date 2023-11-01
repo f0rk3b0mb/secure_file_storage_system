@@ -8,44 +8,64 @@
 </head>
 <body bgcolor="cyan">
 <div class="top_bar">
-<h3><center>Welcome, {{ username }}</h1></center></h3>
-<link_bar>
-<button1><a href="/dashboard">dashboard</a></button1>
-<button1><a href="/upload">upload files</a></button1>
-<button1><a href="/logout">logout</a></button1>
-<button1><a href="/register">register</a></button1>
-<button1><a href="/users">users</a></button1>
-<button1><a href="/files">files</a></button1>
-<button1><a href="/backup">backup</a></button1>
-</link_bar>
+<h3><center>Welcome, {{ username }}</center></h3>
+<div class="link_bar">
+    <button1><a href="/dashboard">dashboard</a></button1>
+    <button1><a href="/upload">upload files</a></button1>
+    <button1><a href="/logout">logout</a></button1>
+    <button1><a href="/register">register</a></button1>
+    <button1><a href="/users">users</a></button1>
+    <button1><a href="/files">files</a></button1>
+    <button1 onclick="confirm()"><a href="/backu">backup</a></button1>
+    <button1><a href="/report">report</a></button1>
+</div>
 </div>
 
-<h5><u>Pending User Approvals</u></h5>
-<table border="1">
-    <thead>
-        <tr>
-            <th>Username</th>
-            <th>Action</th>
-        </tr>
-    </thead>
-    <tbody id="pendingUserApprovals">
-    </tbody>
-</table>
+<p>{{message}}</p>
 
-<h5><u>Pending File Deletion</u></h5>
-<table border="1">
-    <thead>
-        <tr>
-            <th>File Name</th>
-            <th>Action</th>
-        </tr>
-    </thead>
-    <tbody id="pendingFileDeletionApprovals">
-    </tbody>
-</table>
+<div class="tables">
+    <div class="mini">
+        Pending user approvals
+        <table border="1">
+            <thead>
+                <tr>
+                    
+                    <th>Username</th>
+                    <th>Email</th>
+                    <th>Role</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody id="pendingUserApprovals">
+            </tbody>
+        </table>
+    </div>
+
+    <div class="mini">
+        Pending file deletion
+        <table border="1">
+            <thead>
+                
+                
+                <tr>
+                   
+                    <th>File Name</th>
+                    <th>Owner</th>
+                    <th>Permission Level</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody id="pendingFileDeletionApprovals">
+            </tbody>
+        </table>
+    </div>
+</div>
 
 <script>
   // Function to fetch and display pending user approvals
+  function confirm(){
+    alert("Create backup")
+  }
   function displayPendingUserApprovals() {
       fetch('/api/pending_users')
           .then(response => response.json())
@@ -56,14 +76,18 @@
               if (data.length === 0) {
                   const row = pendingUserApprovals.insertRow(0);
                   const cell = row.insertCell(0);
-                  cell.colSpan = 2;
+                  cell.colSpan = 5;
                   cell.textContent = 'No pending user approvals.';
               } else {
                   data.forEach(user => {
                       const row = pendingUserApprovals.insertRow(pendingUserApprovals.rows.length);
                       const usernameCell = row.insertCell(0);
                       usernameCell.textContent = user.username;
-                      const actionCell = row.insertCell(1);
+                      const emailCell = row.insertCell(1);
+                      emailCell.textContent = user.email;
+                      const roleCell = row.insertCell(2);
+                      roleCell.textContent = user.role;
+                      const actionCell = row.insertCell(3);
                       const approveButton = document.createElement('button');
                       approveButton.textContent = 'Approve';
                       approveButton.addEventListener('click', () => approveUser(user.id));
@@ -100,17 +124,21 @@
               if (data.length === 0) {
                   const row = pendingFileDeletionApprovals.insertRow(0);
                   const cell = row.insertCell(0);
-                  cell.colSpan = 2;
+                  cell.colSpan = 5;
                   cell.textContent = 'No pending file deletion approvals.';
               } else {
                   data.forEach(file => {
                       const row = pendingFileDeletionApprovals.insertRow(pendingFileDeletionApprovals.rows.length);
                       const fileNameCell = row.insertCell(0);
-                      fileNameCell.textContent = file.file_name;
-                      const actionCell = row.insertCell(1);
+                      fileNameCell.textContent = file.filename;
+                      const ownerCell = row.insertCell(1);
+                      ownerCell.textContent = file.owner;
+                      const permissionCell = row.insertCell(2);
+                      permissionCell.textContent = file.permission;
+                      const actionCell = row.insertCell(3);
                       const approveButton = document.createElement('button');
                       approveButton.textContent = 'Approve';
-                      approveButton.addEventListener('click', () => approveDeletion(file.file_name));
+                      approveButton.addEventListener('click', () => approveDeletion(file.file_id));
                       actionCell.appendChild(approveButton);
                   });
               }
@@ -118,9 +146,9 @@
   }
 
   // Function to send an approval request for file deletion
-  function approveDeletion(fileName) {
+  function approveDeletion(fileId) {
       // Send a POST request to approve file deletion
-      fetch(`/api/approve_deletion/${fileName}`, { method: 'POST' })
+      fetch(`/api/approve_deletion/${fileId}`, { method: 'POST' })
           .then(response => {
               if (response.status === 200) {
                   // Display updated list of pending file deletion approvals

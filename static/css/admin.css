@@ -5,7 +5,7 @@ body {
   justify-content: flex-end;
   align-items: center;
   gap: 5px;
-  background: skyblue;
+  background: skyblue; 
 }
 
 .top_bar {
@@ -37,4 +37,22 @@ button1 {
 
 a {
   color: black;
+}
+
+
+.tables{
+  display: flex;
+  flex-direction: row;
+  padding: 10px;
+  margin-top: 50px;
+  gap:50px;
+}
+
+.mini{
+  align-items: left;
+  background-color: lightgray;
+  border-radius: 10px;
+  padding: 15px;
+  height: 300px;
+  width: 400px;
 }

@@ -2,8 +2,10 @@ from flask import Flask
 from database import db, bcrypt
 from blueprints.routes import web, api
 from database import User  # Replace 'YourModel' with your actual model
+#from flask_sslify import SSLify
 
 app = Flask(__name__)
+#sslify = SSLify(app)
 
 # Load your Flask app configuration here
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///site.db'
@@ -29,7 +31,8 @@ def add_default_record():
 
 if __name__ == "__main__":
     with app.app_context():
-        db.drop_all()
+        #db.drop_all()
         db.create_all()
-        add_default_record()  # Call the function to add the default record
-    app.run(host="0.0.0.0", port=1234, debug=True)
+        #add_default_record()  # Call the function to add the default record
+        #db.drop_all()
+    app.run(host="0.0.0.0", port=1234, debug=True)#,ssl_context=('https_certs/cert.pem', 'https_certs/key.pem'))

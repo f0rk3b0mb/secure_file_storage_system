@@ -11,6 +11,7 @@ class User(db.Model):
     email= db.Column(db.String(50))
     role = db.Column(db.String(50))
     is_approved= db.Column(db.String(10))
+    date_registered = db.Column(db.String(20))
 
 class File(db.Model):
     id = db.Column(db.Integer, primary_key=True)

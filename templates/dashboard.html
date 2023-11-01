@@ -14,12 +14,18 @@
         ><button1><a href="/logout">logout</a></button1></link_bar
       >
     </div>
-    <h5>Your uploaded files:</h5>
-    <ul id="fileList"></ul>
+    <h3>Your uploaded files:</h3>
+    <div class="tables"><div class="mini">
+      <h3>Private Files:</h3>
+      <ul id="privateFileList"></ul></div>
+      <div class="mini"><h3>Public Files:</h3>
+        <ul id="publicFileList"></ul></div>
+      
+    </div>
     <script>
-      // Function to create a list item with both a link and a request button
-      function addFileListItem(fileName) {
-        const fileList = document.getElementById("fileList");
+      // Function to create a list item with a link and a request button for private files
+      function addPrivateFileListItem(fileName) {
+        const fileList = document.getElementById("privateFileList");
         const listItem = document.createElement("li");
 
         // Create a link for downloading
@@ -27,7 +33,7 @@
         fileLink.href = `/api/download/${fileName}`;
         fileLink.textContent = fileName;
 
-        // Create a request button
+        // Create a request button for private files
         const requestButton = document.createElement("button");
         requestButton.textContent = "Request Deletion";
         requestButton.addEventListener("click", () => requestDelete(fileName));
@@ -36,20 +42,43 @@
         listItem.appendChild(fileLink);
         listItem.appendChild(requestButton);
 
-        // Append the list item to the list
+        // Append the list item to the private list
         fileList.appendChild(listItem);
       }
 
-      // Fetch the list of files and create list items with links and request buttons
+      // Function to create a list item with a link for public files
+      function addPublicFileListItem(fileName) {
+        const fileList = document.getElementById("publicFileList");
+        const listItem = document.createElement("li");
+
+        // Create a link for downloading
+        const fileLink = document.createElement("a");
+        fileLink.href = `/api/download/${fileName}`;
+        fileLink.textContent = fileName;
+
+        // Append the link to the list item
+        listItem.appendChild(fileLink);
+
+        // Append the list item to the public list
+        fileList.appendChild(listItem);
+      }
+
+      // Fetch the list of files and create list items with links and request buttons for private files
       function fetchFileList() {
-        fetch("api/viewFiles")
+        fetch("/api/viewFiles")
           .then((response) => response.json())
           .then((data) => {
-            const fileList = document.getElementById("fileList");
-            fileList.innerHTML = ""; // Clear the list
+            const privateFileList = document.getElementById("privateFileList");
+            const publicFileList = document.getElementById("publicFileList");
+            privateFileList.innerHTML = ""; // Clear the private list
+            publicFileList.innerHTML = ""; // Clear the public list
 
-            data.forEach((fileName) => {
-              addFileListItem(fileName);
+            data.private.forEach((fileName) => {
+              addPrivateFileListItem(fileName);
+            });
+
+            data.public.forEach((fileName) => {
+              addPublicFileListItem(fileName);
             });
           });
       }

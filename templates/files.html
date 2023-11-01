@@ -21,6 +21,7 @@
           <th>owner_id</th>
           <th>upload_date</th>
           <th>deletion_status</th>
+          <th>permission_level</th>
         </tr>
       </thead>
       <tbody>
@@ -31,6 +32,7 @@
           <td>{{ file.owner_id }}</td>
           <td>{{ file.upload_date }}</td>
           <td>{{ file.is_pending_deletion }}</td>
+          <td>{{ file.permission_level }}</td>
           </td>
         </tr>
         {% endfor %}

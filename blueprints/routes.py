@@ -1,13 +1,11 @@
-from flask import Blueprint, render_template, redirect, url_for, request, flash, session ,jsonify
+from flask import Blueprint, render_template, redirect, url_for, request, flash, session ,jsonify , make_response
 import os
 from database import db, bcrypt , User , File
 from utils import calculate_sha256, encrypt_file , decrypt_file , login_required , admin_required
 import datetime
-#from itsdangerous import URLSafeTimedSerializer
-#
-# Initialize the serializer with a secret key  will import from main
-#serializer = URLSafeTimedSerializer(app.config["SECRET_KEY"])
-
+from  report_generator import generate_combined_report
+import subprocess
+import datetime
 
 web = Blueprint('web', __name__)
 api = Blueprint('api', __name__)
@@ -70,11 +68,11 @@ def register():
         # Check if the username is already taken
         existing_user = User.query.filter_by(email=email).first()
         if existing_user:
-            return "Username already taken. Please choose another username."
+            return render_template("register.html",message="Username already taken. Please choose another username.")
         else:
             # Hash the password and create a new user
             hashed_password = bcrypt.generate_password_hash(password).decode("utf-8")
-            new_user = User(username=username, password=hashed_password , email=email, role="user", is_approved="False")
+            new_user = User(username=username, password=hashed_password , email=email, role="user", is_approved="False", date_registered=datetime.date.today())
             db.session.add(new_user)
             db.session.commit()
             return render_template("login.html", message="Await admin approval") # Redirect to the login route
@@ -114,9 +112,11 @@ def admin():
 def viewFile():
      # List files in the 'uploads' directory
     upload_dir = 'uploads/'+session['username']
-    file_names = os.listdir(upload_dir)
-    return jsonify(file_names)
-    
+    private_files = os.listdir(upload_dir)
+    public_dir = 'uploads/public'
+    public_files = os.listdir(public_dir)
+
+    return jsonify({"private": private_files, "public": public_files})    ## fix display 
     
 
 @api.route("/addFiles", methods=['POST'])
@@ -132,8 +132,12 @@ def addFiles():
         return 'No selected file'
 
     # Save the file in the 'uploads/username' directory
-    file_path = os.path.join('uploads/',session['username'], file.filename)
-    file.save(file_path)
+    if permission_level == "1":
+        file_path = os.path.join('uploads/',session['username'], file.filename)
+        file.save(file_path)
+    elif permission_level == "2":
+        file_path = os.path.join('uploads/public', file.filename)
+        file.save(file_path)
 
     #encrypt file
     success, message = encrypt_file(file_path)
@@ -213,13 +217,18 @@ def get_pending_deletion_requests():
     # Find all files that are pending deletion
     pending_deletion_files = File.query.filter_by(is_pending_deletion="True").all()
     
-    # Check if there are pending deletion files
-    if pending_deletion_files:
-        # Extract file names from the list of pending deletion files
-        pending_files_data = [{"file_name": file.file_name} for file in pending_deletion_files]
-        return jsonify(pending_files_data)
-    else:
-        return jsonify({"message": "No files pending deletion."})
+    pending_files_details = []
+
+    for file in pending_deletion_files:
+        file_detail = {
+            'file_id': file.id,
+            'filename': file.file_name,
+            'owner': file.owner_id,
+            'permission': file.permission_level,
+        }
+        pending_files_details.append(file_detail)
+    
+    return jsonify(pending_files_details)
 
 
 @api.route("/approve_deletion/<string:file_name>", methods=["POST"])
@@ -229,9 +238,6 @@ def approve_deletion(file_name):
     file = File.query.filter_by(file_name=file_name).first()
 
     if file and file.is_pending_deletion:
-        # Perform the actual file deletion
-        # Here, you can add code to delete the file from the file system
-        # For example, if you're using the os module, you can do:
         
         os.remove(file.file_path)
 
@@ -303,54 +309,51 @@ def files():
 
     return render_template("files.html", files=files)
 
-## backup
 
-@web.route("/backup", methods=["GET"])
-@admin_required
-def backup():
-    return "backup"
 
 # TO-DO
 
 
-# Route for requesting a password reset
-#@web.route("/forgot_password", methods=["GET", "POST"])
-#def forgot_password():
-#    if request.method == "POST":
-#        username_or_email = request.form.get("username_or_email")
-#        user = User.query.filter((User.username == username_or_email) | (User.email == username_or_email)).first()
-#        
-#        if user:
-#            # Generate a token for password reset
-#            token = serializer.dumps(user.username, salt='password-reset')
-#            
-#            # Send an email with a link containing the token
-#            # Use Flask-Mail or another email library to send the email
-#            send_password_reset_email(user.email, token)
-#
-#        flash("If the provided email/username exists, you will receive an email with instructions to reset your password.", "info")
-#
-#    return render_template("forgot_password.html")
-#
-## Route for resetting the password
-#@web.route("/reset_password/<token>", methods=["GET", "POST"])
-#def reset_password(token):
-#    try:
-#        # Verify and decode the token
-#        username = serializer.loads(token, salt='password-reset', max_age=3600)
-#        user = User.query.filter_by(username=username).first()
-#    except Exception:
-#        flash("The reset link is invalid or has expired.", "danger")
-#        return redirect(url_for("web.login"))
-#
-#    if request.method == "POST":
-#        new_password = request.form.get("new_password")
-#        hashed_password = bcrypt.generate_password_hash(new_password).decode("utf-8")
-#        user.password = hashed_password
-#        db.session.commit()
-#
-#        flash("Your password has been reset. You can now log in with your new password.", "success")
-#        return redirect(url_for("web.login"))
-#
-#    return render_template("reset_password.html")
-#
+## generate report
+
+@web.route("/report", methods=["GET"])
+@admin_required
+def generate_report():
+    users = User.query.all()
+    files = File.query.all()
+    pdf_data = generate_combined_report(users, files)
+    filename = datetime.datetime.now().isoformat() + '.pdf'
+    with open(os.path.join('backups', filename), 'wb') as f:
+        f.write(pdf_data)
+    response = make_response(pdf_data)
+    response.headers['Content-Type'] = 'application/pdf'
+    response.headers['Content-Disposition'] = f'inline; filename=report.pdf'
+
+    return response
+
+
+##backup
+
+@web.route("/backup",methods=["GET"])
+def create_backup():
+    # Define the backup directory using the current date and time in ISO format
+    backup_dir_name = datetime.datetime.now().isoformat()
+    backup_dir = os.path.join('backups', backup_dir_name)
+    os.makedirs(backup_dir, exist_ok=True)
+
+    #copy files
+    cmd= f"mkdir {backup_dir}/files && cp -r uploads/* {backup_dir}/files"
+    subprocess.Popen(cmd, shell=True)
+    #copy db
+    cmd2= f"mkdir {backup_dir}/db && cp -r instance/* {backup_dir}/db"
+    subprocess.Popen(cmd2, shell=True)
+
+    #copy logs
+    cmd3= f"mkdir {backup_dir}/logs && cp -r logs/* {backup_dir}/logs"
+    subprocess.Popen(cmd3, shell=True)
+
+    subprocess.Popen(cmd2,shell=True)
+    return render_template("admin.html",username=session['username'],message=f"Created backup {backup_dir_name} succesfully")
+        
+
+
