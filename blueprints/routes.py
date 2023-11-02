@@ -335,6 +335,7 @@ def generate_report():
 ##backup
 
 @web.route("/backup",methods=["GET"])
+@admin_required
 def create_backup():
     # Define the backup directory using the current date and time in ISO format
     backup_dir_name = datetime.datetime.now().isoformat()
