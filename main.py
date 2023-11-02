@@ -31,8 +31,7 @@ def add_default_record():
 
 if __name__ == "__main__":
     with app.app_context():
-        #db.drop_all()
+        #db.drop_all()  #for testing purposes
         db.create_all()
-        #add_default_record()  # Call the function to add the default record
-        #db.drop_all()
+        #add_default_record()  # for testing purposes
     app.run(host="0.0.0.0", port=1234, debug=True)#,ssl_context=('https_certs/cert.pem', 'https_certs/key.pem'))

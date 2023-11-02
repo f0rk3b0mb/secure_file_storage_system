@@ -5,9 +5,10 @@ body {
   justify-content: flex-end;
   align-items: center;
   gap: 10px;
-  background: skyblue;
+  background: rgb(10, 36, 36);
   margin: 0px;
   border: 0px;
+  color: white;
 }
 
 input {
@@ -16,5 +17,5 @@ input {
 }
 
 a {
-  color: black;
+  color: white;
 }

@@ -231,11 +231,11 @@ def get_pending_deletion_requests():
     return jsonify(pending_files_details)
 
 
-@api.route("/approve_deletion/<string:file_name>", methods=["POST"])
+@api.route("/approve_deletion/<string:file_id>", methods=["POST"])
 @admin_required
-def approve_deletion(file_name):
+def approve_deletion(file_id):
     # Find the file by name
-    file = File.query.filter_by(file_name=file_name).first()
+    file = File.query.filter_by(id=file_id).first()
 
     if file and file.is_pending_deletion:
         
