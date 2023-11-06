@@ -9,10 +9,11 @@
   <body bgcolor="cyan">
     <div class="top_bar">
       <h3>Welcome, {{username}}</h3>
-      <link_bar
-        ><button1><a href="/upload">upload files</a></button1
-        ><button1><a href="/logout">logout</a></button1></link_bar
-      >
+      <link_bar>
+        <button1><a href="/upload">upload files</a></button1>
+        <button1><a href="/faq">help</a></button1>
+        <button1><a href="/logout">logout</a></button1>
+        </link_bar>
     </div>
     <h3>Your uploaded files:</h3>
     <div class="tables"><div class="mini">
@@ -22,6 +23,12 @@
         <ul id="publicFileList"></ul></div>
       
     </div>
+
+
+    <div class="footer">
+      <h4>Secure file storage system @2023</h4>
+    </div>
+
     <script>
       // Function to create a list item with a link and a request button for private files
       function addPrivateFileListItem(fileName) {
@@ -53,7 +60,7 @@
 
         // Create a link for downloading
         const fileLink = document.createElement("a");
-        fileLink.href = `/api/download/${fileName}`;
+        fileLink.href = `/api/download/public/${fileName}`;
         fileLink.textContent = fileName;
 
         // Append the link to the list item

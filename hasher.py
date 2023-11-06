@@ -1,3 +1,5 @@
+## This is not part of the sytstem , a simple utility i used to polpulate the db for testing
+
 import bcrypt
 
 # Password to hash

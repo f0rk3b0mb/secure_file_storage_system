@@ -1,13 +1,13 @@
 server {
     listen 80;
-    server_name evil.com;
+    server_name securestorage.web;
     return 301 https://$host$request_uri;
 }
 
 
 server {
     listen 443 ssl;
-    server_name evil.com;
+    server_name securestorage.web;
     access_log /home/ubuntu/project/3rd_yr_project/secure_file_storage_system/logs/access.log;
 
     ssl_certificate /home/ubuntu/project/3rd_yr_project/secure_file_storage_system/https_certs/cert.pem;

@@ -58,3 +58,17 @@ a {
   width: 400px;
   color: white;
 }
+
+.footer{
+  width: 100%;
+  background-color: darkblue;
+  position:fixed;
+  bottom: 0;
+  background-color:  rgb(10, 36, 36);
+  padding-left: 100px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  color: white;
+}

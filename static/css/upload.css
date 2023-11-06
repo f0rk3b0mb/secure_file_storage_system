@@ -40,3 +40,18 @@ button1 {
   padding: 5px;
   background-color: rgb(10, 36, 36);
 }
+
+
+.footer{
+  width: 100%;
+  background-color: darkblue;
+  position:fixed;
+  bottom: 0;
+  background-color:  rgb(10, 36, 36);
+  padding-left: 100px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  color: white;
+}

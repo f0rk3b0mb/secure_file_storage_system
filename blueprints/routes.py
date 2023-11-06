@@ -79,15 +79,10 @@ def register():
 
     return render_template("register.html")
 
-@web.route("/profile")
-@login_required
-def profile():
-    if "user_id" in session:
-        user = User.query.get(session["user_id"])
-        return f"Welcome, {user.username}!"
-    else:
-        flash("You must be logged in to access this page.", "warning")
-        return redirect(url_for("web.login"))  # Redirect to the login route
+@web.route("/faq")
+def faq():
+    return render_template("faq.html")
+    
 
 @web.route("/logout")
 def logout():
@@ -129,7 +124,7 @@ def addFiles():
     permission_level= request.form.get("permission_level")
 
     if file.filename == '':
-        return 'No selected file'
+        return render_template("upload.html",status='No selected file')
 
     # Save the file in the 'uploads/username' directory
     if permission_level == "1":
@@ -177,15 +172,38 @@ def delete_file():
 @api.route('/download/<file_name>')
 @login_required
 def download_file(file_name):
-    file_path = os.path.join('uploads',session['username'], file_name)
-
-    # Decrypt the file and get the Flask response
-    success, response = decrypt_file(file_path)
-
-    if success:
-        return response
+    if file_name == "manual":
+        #download user_manual
+        file_path = os.path.join("static","user_manual.pdf")
+        f= open(file_path,"rb")
+        response = make_response(f.read())
+        response.headers['Content-Type'] = 'application/pdf'
+        response.headers['Content-Disposition'] = f'inline; filename=report.pdf'
+        return(response)
     else:
-        return f'Failed to decrypt the file {response}'
+        file_path = os.path.join('uploads',session['username'], file_name)
+
+        # Decrypt the file and get the Flask response
+        success, response = decrypt_file(file_path)
+
+        if success:
+            return response
+        else:
+            return f'Failed to decrypt the file {response}'
+
+
+@api.route('/download/public/<file_name>')
+@login_required
+def download_public_file(file_name):
+        file_path = os.path.join('uploads','public', file_name)
+
+        # Decrypt the file and get the Flask response
+        success, response = decrypt_file(file_path)
+
+        if success:
+            return response
+        else:
+            return f'Failed to decrypt the file {response}'
 
 ##admin functionaties
 
