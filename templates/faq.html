@@ -3,37 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>faq</title>
+    <title>FAQ</title>
     <link rel="stylesheet" href="/static/css/list.css">
 </head>
-<body>
-    <body bgcolor="cyan">
-        <div class="top_bar"><h4>Frequently asked questions</h4>
-            <link_bar>
-        <button1><a href="/api/download/manual">user manual</a></button1>
-        <button1><a href="/dashboard">dashboard</a></button1>
+<body bgcolor="cyan">
+    <div class="top_bar">
+        <h4>Frequently asked questions</h4>
+        <link_bar>
+            <button1><a href="/api/download/public/manual">User manual</a></button1>
+            <button1><a href="/dashboard">Dashboard</a></button1>
         </link_bar>
-        </div>
-    <div id="q_bar" onmouseover="show()" onmouseout="hide()">
+    </div>
+
+    <div class="q_bar" onmouseover="show(this)" onmouseout="hide(this)">
         <p>How are files secured?</p>
         <answer hidden>Files are encrypted using AES encryption upon upload</answer>
     </div>
-    <div id="q_bar" onmouseover="show()" onmouseout="hide()">
-        <p>How can i delete my files</p>
-        <answer hidden>Files can be deleted by sending  deletion request to the admin</answer>
+    <div class="q_bar" onmouseover="show(this)" onmouseout="hide(this)">
+        <p>How can I delete my files?</p>
+        <answer  hidden>Files can be deleted by sending a deletion request to the admin</answer>
     </div>
-    <div id="q_bar" onmouseover="show()" onmouseout="hide()">
-        <p>Is there backup for files i upload </p>
-        <answer hidden>The system creates a copy files uploaded</answer>
+    <div class="q_bar" onmouseover="show(this)" onmouseout="hide(this)">
+        <p>Is there a backup for files I upload?</p>
+        <answer hidden>The system creates a copy of files uploaded</answer>
     </div>
+
     <br>
     <br>
-    <p>For more queries contact the system administartor</p>
+    <p>For more queries, contact the system administrator</p>
 
     <div class="footer">
         <h4>Secure file storage system @2023</h4>
-      </div>
-
+    </div>
 
     <script src="/static/js/faq.js"></script>
 </body>

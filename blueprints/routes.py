@@ -172,15 +172,6 @@ def delete_file():
 @api.route('/download/<file_name>')
 @login_required
 def download_file(file_name):
-    if file_name == "manual":
-        #download user_manual
-        file_path = os.path.join("static","user_manual.pdf")
-        f= open(file_path,"rb")
-        response = make_response(f.read())
-        response.headers['Content-Type'] = 'application/pdf'
-        response.headers['Content-Disposition'] = f'inline; filename=report.pdf'
-        return(response)
-    else:
         file_path = os.path.join('uploads',session['username'], file_name)
 
         # Decrypt the file and get the Flask response
@@ -193,8 +184,16 @@ def download_file(file_name):
 
 
 @api.route('/download/public/<file_name>')
-@login_required
 def download_public_file(file_name):
+    if file_name == "manual":
+        #download user_manual
+        file_path = os.path.join("static","user_manual.pdf")
+        f= open(file_path,"rb")
+        response = make_response(f.read())
+        response.headers['Content-Type'] = 'application/pdf'
+        response.headers['Content-Disposition'] = f'inline; filename=report.pdf'
+        return(response)
+    else:
         file_path = os.path.join('uploads','public', file_name)
 
         # Decrypt the file and get the Flask response

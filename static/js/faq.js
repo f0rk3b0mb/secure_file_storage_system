@@ -1,11 +1,11 @@
-function show() {
-    bar = document.getElementById("q_bar");
-    bar.style.height = "100px"
-    bar.childNodes[3].hidden = false;
+function show(element) {
+    var answer = element.querySelector("answer");
+    element.style.height = "100px"; // Increase the height
+    answer.hidden = false;
 }
 
-function hide() {
-    bar = document.getElementById("q_bar");
-    bar.style.height = "40px"
-    bar.childNodes[3].hidden = true;
+function hide(element) {
+    var answer = element.querySelector("answer");
+    element.style.height = "50px"; // Reset the height
+    answer.hidden = true;
 }
