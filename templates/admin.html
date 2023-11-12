@@ -2,71 +2,111 @@
 <html>
 <head>
     <title>Admin Dashboard</title>
-    <link rel="stylesheet" type="text/css" href="/static/css/admin.css" />
+    <link rel="stylesheet" type="text/css" href="/static/css/main.css" />
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
-<body bgcolor="cyan">
-<div class="top_bar">
-<h3><center>Welcome, {{ username }}</center></h3>
-<div class="link_bar">
-    <button1><a href="/dashboard">dashboard</a></button1>
-    <button1><a href="/upload">upload files</a></button1>
-    <button1><a href="/logout">logout</a></button1>
-    <button1><a href="/register">register</a></button1>
-    <button1><a href="/users">users</a></button1>
-    <button1><a href="/files">files</a></button1>
-    <button1 onclick="confirm()"><a href="/backup">backup</a></button1>
-    <button1><a href="/report">report</a></button1>
-</div>
-</div>
+<body>
+    <div class="Dashboard">
 
-<p>{{message}}</p>
+        <div class="side_bar">
+            <div class="logo"><img src="/static/images/logo.png"></div>
+            <div class="link_bar">
+              <div class="links">
+                    <button class="menu_item"><a href="/dashboard">dashboard</a></button>
+                    <button class="menu_item"><a href="/upload">upload files</a></button>
+                    <button class="menu_item"><a href="/logout">logout</a></button>
+                    <button class="menu_item"><a href="/register">register</a></button>
+                    <button class="menu_item"><a href="/users">users</a></button>
+                    <button class="menu_item"><a href="/files">files</a></button>
+                    <button class="menu_item" onclick="confirm()"><a href="/backup">backup</a></button>
+                    <button class="menu_item"><a href="/report">report</a></button>
+                </div>
+            </div>
+            <div class="footer"><b><p>SecureFileStorage @2023</p></b></div>
+        </div>
 
-<div class="tables">
-    <div class="mini">
-        Pending user approvals
-        <table border="1">
-            <thead>
-                <tr>
-                    
-                    <th>Username</th>
-                    <th>Email</th>
-                    <th>Role</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody id="pendingUserApprovals">
-            </tbody>
-        </table>
-    </div>
-
-    <div class="mini">
-        Pending file deletion
-        <table border="1">
-            <thead>
+        <div class="right_side">
+            <div class="top_bar">
+                <h3><center>Welcome, {{ username }}</center></h3>
                 
-                
-                <tr>
-                   
-                    <th>File Name</th>
-                    <th>Owner</th>
-                    <th>Permission Level</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody id="pendingFileDeletionApprovals">
-            </tbody>
-        </table>
-    </div>
-</div>
+                </div>
 
-<div class="footer">
-    <h4>Secure file storage system @2023</h4>
-  </div>
+                <p>{{message}}</p>
+
+                <input placeholder="search" class="search" id="searchField">
+                
+
+
+                <div class="view">
+                    <div class="tabs">
+                      <button class="tab_item" id="showUsers">pending user approvals</button> <!-- will add functionality to buttons-->
+                      <button class="tab_item" id="showFiles">pending file approvals</button>
+                    </div>    
+                    <div class="table">
+                        <div  id="pendingUsers" class="mini_table">
+                          <h3>pending users</h3>
+                          <table border="1">
+                            <thead>
+                                <tr>
+                                    
+                                    <th>Username</th>
+                                    <th>Email</th>
+                                    <th>Role</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="pendingUserApprovals">
+                            </tbody>
+                        </table>
+                        </div>
+                        <div  id="pendingFiles" class="mini_table">
+                            <h3>pending file approvals</h3>
+                            <table border="1">
+                                <thead>
+                                    
+                                    
+                                    <tr>
+                                       
+                                        <th>File Name</th>
+                                        <th>Owner</th>
+                                        <th>Permission Level</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="pendingFileDeletionApprovals">
+                                </tbody>
+                            </table>
+                          </div>
+                  </div>
+                  </div>
+
+
+                </div>
+
+    </div>
 
 
 <script>
+document.getElementById('pendingUsers').style.display = 'block';
+document.getElementById('pendingFiles').style.display = 'none';
+
+    document.getElementById('showUsers').addEventListener('click', function() {
+        showElement("pendingUsers");
+            hideElement('pendingFiles');
+        });
+
+        document.getElementById('showFiles').addEventListener('click', function() {
+            showElement('pendingFiles');
+            hideElement('pendingUsers');
+        });
+
+        function hideElement(elementId) {
+            document.getElementById(elementId).style.display = 'none';
+        }
+        function showElement(elementId) {
+            document.getElementById(elementId).style.display = 'block';
+        }
   // Function to fetch and display pending user approvals
   function confirm(){
     alert("Create backup")
@@ -169,6 +209,9 @@
   // Initial display of pending approvals
   displayPendingUserApprovals();
   displayPendingFileDeletionApprovals();
+
+
+  
 </script>
 
 </body>

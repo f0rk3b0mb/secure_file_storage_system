@@ -2,34 +2,70 @@
 <html>
   <head>
     <title>Dashboard</title>
-    <link rel="stylesheet" type="text/css" href="/static/css/dashboard.css" />
+    <link rel="stylesheet" type="text/css" href="/static/css/main.css" />
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   </head>
-  <body bgcolor="cyan">
-    <div class="top_bar">
-      <h3>Welcome, {{username}}</h3>
-      <link_bar>
-        <button1><a href="/upload">upload files</a></button1>
-        <button1><a href="/faq">help</a></button1>
-        <button1><a href="/logout">logout</a></button1>
-        </link_bar>
+  <body>
+    <div class="Dashboard">
+    <div class="side_bar">
+    <div class="logo"><img src="/static/images/logo.png"></div>
+    <div class="link_bar">
+      <div class="links">
+        <button class="menu_item"><a href="/upload">upload files</a></button>
+        <button class="menu_item"><a href="/faq">help</a></button>
+        <button class="menu_item"><a href="/logout">logout</a></button>
+        </div>
     </div>
-    <h3>Your uploaded files:</h3>
-    <div class="tables"><div class="mini">
-      <h3>Private Files:</h3>
-      <ul id="privateFileList"></ul></div>
-      <div class="mini"><h3>Public Files:</h3>
-        <ul id="publicFileList"></ul></div>
-      
+    <div class="footer"><b><p>SecureFileStorage @2023</p></b></div>
     </div>
+    <div class="right_side">
+      <div class="top_bar">
+        <h3>Welcome, {{username}}</h3>
+      </div>
+      <p>{{message}}</p>
 
+      <input placeholder="search" class="search" >
 
-    <div class="footer">
-      <h4>Secure file storage system @2023</h4>
+    <div class="view">
+      <div class="tabs">
+        <button class="tab_item" id="showPrivate">private</button> <!-- will add functionality to buttons-->
+        <button class="tab_item" id="showPublic">public</button>
+      </div>    
+    <div class="table">
+      <div class="mini_table" id="showPrivateFiles">
+        <h3>private files</h3>
+        <ul id="privateFileList"></ul>
+      </div>
+    <div class="mini_table" id="showPublicFiles">
+      <h3>private files</h3>
+      <ul id="publicFileList"></ul>
+    </div>
+    </div>
+  </div>
     </div>
 
     <script>
+
+document.getElementById('showPrivateFiles').style.display = 'block';
+document.getElementById('showPublicFiles').style.display = 'none';
+
+    document.getElementById('showPrivate').addEventListener('click', function() {
+        showElement("showPrivateFiles");
+            hideElement('showPublicFiles');
+        });
+
+        document.getElementById('showPublic').addEventListener('click', function() {
+            showElement('showPublicFiles');
+            hideElement('showPrivateFiles');
+        });
+
+        function hideElement(elementId) {
+            document.getElementById(elementId).style.display = 'none';
+        }
+        function showElement(elementId) {
+            document.getElementById(elementId).style.display = 'block';
+        }
       // Function to create a list item with a link and a request button for private files
       function addPrivateFileListItem(fileName) {
         const fileList = document.getElementById("privateFileList");
@@ -115,6 +151,7 @@
 
       // Initial fetch of the file list when the page loads
       fetchFileList();
+      
     </script>
   </body>
 </html>

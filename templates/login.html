@@ -2,14 +2,14 @@
 <html>
   <head>
     <title>Login</title>
-    <link rel="stylesheet" type="text/css" href="/static/css/login.css" />
+    <link rel="stylesheet" type="text/css" href="/static/css/main.css" />
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   </head>
-  <body bgcolor="cyan">
-    <div class="header"><h1>Login</h1></div>
-     <p>{{message}}</p>
-    <div id="messages"></div>
+  <body>
+    <div class="body">
+    <div class="loginForm"><h1>Login</h1>
+    <div id="messages"><p>{{message}}</p></div>
     <form id="loginForm" method="POST" action="/login">
       <!-- Modified action attribute -->
       <input
@@ -28,9 +28,11 @@
       /><br />
       <input id="submit" type="submit" value="Login" />
     </form>
+</div>
     <a href="register">Register??</a>
     <div class="footer">
       <h4>Secure file storage system @2023</h4>
+    </div>
     </div>
     <script src="main.js"></script>
   </body>
