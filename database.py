@@ -23,3 +23,19 @@ class File(db.Model):
     sha256sum= db.Column(db.Integer)
     permission_level = db.Column(db.Integer, nullable=False)
     is_pending_deletion = db.Column(db.String(10))
+
+
+class Backups(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    file_name = db.Column(db.String(255), nullable=False)
+    file_path = db.Column(db.String(60))
+    date_created = db.Column(db.String(60))
+    file_size= db.Column(db.String(60))
+    sha256sum= db.Column(db.Integer)
+
+
+class Roles(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    role_name = db.Column(db.String(255))
+    role_description= db.Column(db.String(255))
+

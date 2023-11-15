@@ -5,7 +5,7 @@ from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle
 import datetime
 
-def generate_combined_report(users, files):
+def generate_users_report(users):
     buffer = BytesIO()
     doc = SimpleDocTemplate(buffer, pagesize=landscape(letter))
     elements = []
@@ -38,7 +38,24 @@ def generate_combined_report(users, files):
 
     elements.append(Spacer(1, 12))
 
-    title = Paragraph("<h6>Files Report</h6>", custom_style)
+    footer = Paragraph(f"Generated on {datetime.date.today()}", custom_style)
+    elements.append(footer)
+
+    # Build the combined PDF report
+    doc.build(elements)
+    buffer.seek(0)
+    return buffer.read()
+
+
+def generate_files_report(files):
+
+    buffer = BytesIO()
+    doc = SimpleDocTemplate(buffer, pagesize=landscape(letter))
+    elements = []
+    styles = getSampleStyleSheet()
+    custom_style = ParagraphStyle('CustomStyle', parent=styles['Normal'])
+    custom_style.alignment = 1
+    title = Paragraph("<h6>files Report</h6>", custom_style)
     elements.append(title)
 
     # Add a spacer for separation
@@ -75,4 +92,3 @@ def generate_combined_report(users, files):
     doc.build(elements)
     buffer.seek(0)
     return buffer.read()
-

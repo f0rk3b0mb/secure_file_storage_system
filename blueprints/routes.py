@@ -1,9 +1,9 @@
 from flask import Blueprint, render_template, redirect, url_for, request, flash, session ,jsonify , make_response
 import os
-from database import db, bcrypt , User , File
+from database import db, bcrypt , User , File , Backups
 from utils import calculate_sha256, encrypt_file , decrypt_file , login_required , admin_required
 import datetime
-from  report_generator import generate_combined_report
+from  report_generator import generate_files_report, generate_users_report
 import subprocess
 import datetime
 
@@ -12,9 +12,8 @@ api = Blueprint('api', __name__)
 
 
 @web.route("/")
-@login_required
 def index():
-    return redirect(url_for("web.dashboard"))
+    return render_template("landing.html")
 
 @web.route("/dashboard")
 @login_required
@@ -72,7 +71,7 @@ def register():
         else:
             # Hash the password and create a new user
             hashed_password = bcrypt.generate_password_hash(password).decode("utf-8")
-            new_user = User(username=username, password=hashed_password , email=email, role="user", is_approved="False", date_registered=datetime.date.today())
+            new_user = User(username=username, password=hashed_password , email=email, role=role, is_approved="False", date_registered=datetime.date.today())
             db.session.add(new_user)
             db.session.commit()
             return render_template("login.html", message="Await admin approval") # Redirect to the login route
@@ -328,25 +327,57 @@ def files():
 
 
 
+@web.route("/viewBackups", methods=["GET"])
+@admin_required
+def viewBackups():
+    backups = Backups.query.all()
+
+    return render_template("backups.html", files=backups)
+
+
+
 # TO-DO
 
 
 ## generate report
 
-@web.route("/report", methods=["GET"])
+@web.route("/report", methods=["GET","POST"])
 @admin_required
 def generate_report():
-    users = User.query.all()
-    files = File.query.all()
-    pdf_data = generate_combined_report(users, files)
-    filename = datetime.datetime.now().isoformat() + '.pdf'
-    with open(os.path.join('backups', filename), 'wb') as f:
-        f.write(pdf_data)
-    response = make_response(pdf_data)
-    response.headers['Content-Type'] = 'application/pdf'
-    response.headers['Content-Disposition'] = f'inline; filename=report.pdf'
 
-    return response
+    if request.method == "GET":
+        return render_template("report.html")
+    elif request.method == "POST":
+        if request.form.get("selected_type") == "users":
+            users = User.query.all()
+            pdf_data = generate_users_report(users)
+            filename = datetime.datetime.now().isoformat() + '.pdf'
+            with open(os.path.join('backups', filename), 'wb') as f:
+                f.write(pdf_data)
+            response = make_response(pdf_data)
+            response.headers['Content-Type'] = 'application/pdf'
+            response.headers['Content-Disposition'] = f'inline; filename=users_report.pdf'        
+            return response
+        elif request.form.get("selected_type") == "files":
+            files = File.query.all()
+            pdf_data = generate_files_report(files)
+            filename = datetime.datetime.now().isoformat() + '.pdf'
+            with open(os.path.join('backups', filename), 'wb') as f:
+                f.write(pdf_data)
+            response = make_response(pdf_data)
+            response.headers['Content-Type'] = 'application/pdf'
+            response.headers['Content-Disposition'] = f'inline; filename=files_report.pdf'        
+            return response
+        #elif request.form.get("selected_type") == "backups":
+        #    files = File.query.all()
+        #    pdf_data = generate_files_report(files)
+        #    filename = datetime.datetime.now().isoformat() + '.pdf'
+        #    with open(os.path.join('backups', filename), 'wb') as f:
+        #        f.write(pdf_data)
+        #    response = make_response(pdf_data)
+        #    response.headers['Content-Type'] = 'application/pdf'
+        #    response.headers['Content-Disposition'] = f'inline; filename=files_report.pdf'        
+        #    return response
 
 
 ##backup
@@ -358,6 +389,11 @@ def create_backup():
     backup_dir_name = datetime.datetime.now().isoformat()
     backup_dir = os.path.join('backups', backup_dir_name)
     os.makedirs(backup_dir, exist_ok=True)
+
+    new_backup = Backups(file_name=backup_dir_name , file_path=backup_dir,date_created=datetime.datetime.now())
+    db.session.add(new_backup)
+    db.session.commit()
+
 
     #copy files
     cmd= f"mkdir {backup_dir}/files && cp -r uploads/* {backup_dir}/files"
@@ -371,6 +407,10 @@ def create_backup():
     subprocess.Popen(cmd3, shell=True)
 
     subprocess.Popen(cmd2,shell=True)
+    
+
+
+
     return render_template("admin.html",username=session['username'],message=f"Created backup {backup_dir_name} succesfully")
         
 

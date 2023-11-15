@@ -1,0 +1,32 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/css/main.css">
+    <title>report</title>
+</head>
+<body>
+
+    <div class="body">
+            <div class="top_bar">
+            <h3>View Annual Report</h3>
+            <a href="/admin">admin</a>
+            </div>
+            <div class="mini-table">
+            <form method="post" action="/report">
+                <label for="report for">Generate report for:</label>
+                <select name="selected_type" id="selected_type">
+                    <option value="users">Users</option>
+                    <option value="files">Files</option>
+                    <option value="backup">Backups</option>
+
+                    <!-- Add options for other years as needed -->
+                </select>
+                <button type="submit">View Report</button>
+            </form>
+        </div>
+    </div>
+</body>
+    
+</body>
+</html>

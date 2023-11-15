@@ -38,7 +38,7 @@
         <ul id="privateFileList"></ul>
       </div>
     <div class="mini_table" id="showPublicFiles">
-      <h3>private files</h3>
+      <h3>public files</h3>
       <ul id="publicFileList"></ul>
     </div>
     </div>
@@ -77,13 +77,13 @@ document.getElementById('showPublicFiles').style.display = 'none';
         fileLink.textContent = fileName;
 
         // Create a request button for private files
-        const requestButton = document.createElement("button");
-        requestButton.textContent = "Request Deletion";
-        requestButton.addEventListener("click", () => requestDelete(fileName));
-
-        // Append the link and request button to the list item
+        //const requestButton = document.createElement("button");
+        //requestButton.textContent = "Request Deletion";
+        //requestButton.addEventListener("click", () => requestDelete(fileName));
+//
+        //// Append the link and request button to the list item
         listItem.appendChild(fileLink);
-        listItem.appendChild(requestButton);
+        //listItem.appendChild(requestButton);
 
         // Append the list item to the private list
         fileList.appendChild(listItem);

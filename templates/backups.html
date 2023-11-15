@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>System Backups</title>
+    <link rel="stylesheet" type="text/css" href="/static/css/main.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  </head>
+  <body>
+    <div class="body">
+    <div class="top_bar"><h3>System Backups</h3>
+      <a href="/admin">admin</a></div>
+      <br>
+      <br>
+    
+
+    <table border="1">
+      <thead>
+        <tr>
+          <th>File Name</th>
+          <th>file path</th>
+          <th>date created</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for file in files %}
+        <tr>
+          <td>{{ file.file_name }}</td>
+          <td>{{ file.file_path }}</td>
+          <td>{{ file.date_created }}</td>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    <div class="footer">
+      <h4>Secure file storage system @2023</h4>
+    </div>
+
+    </div>
+  </body>
+</html>
