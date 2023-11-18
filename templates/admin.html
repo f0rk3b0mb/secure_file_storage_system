@@ -35,7 +35,7 @@
 
                 <p>{{message}}</p>
 
-                <input placeholder="search" class="search" id="searchField">
+                <input placeholder="Search" class="search" id="searchField" onkeyup="searchFunction()">
                 
 
 
@@ -89,29 +89,60 @@
 
 
 <script>
-document.getElementById('pendingUsers').style.display = 'block';
-document.getElementById('pendingFiles').style.display = 'none';
-
-    document.getElementById('showUsers').addEventListener('click', function() {
-        showElement("pendingUsers");
-            hideElement('pendingFiles');
-        });
-
-        document.getElementById('showFiles').addEventListener('click', function() {
-            showElement('pendingFiles');
-            hideElement('pendingUsers');
-        });
-
-        function hideElement(elementId) {
-            document.getElementById(elementId).style.display = 'none';
-        }
-        function showElement(elementId) {
-            document.getElementById(elementId).style.display = 'block';
-        }
+//document.getElementById('pendingUsers').style.display = 'block';
+//document.getElementById('pendingFiles').style.display = 'none';
+//
+//    document.getElementById('showUsers').addEventListener('click', function() {
+//        showElement("pendingUsers");
+//            hideElement('pendingFiles');
+//        });
+//
+//        document.getElementById('showFiles').addEventListener('click', function() {
+//            showElement('pendingFiles');
+//            hideElement('pendingUsers');
+//        });
+//
+//        function hideElement(elementId) {
+//            document.getElementById(elementId).style.display = 'none';
+//        }
+//        function showElement(elementId) {
+//            document.getElementById(elementId).style.display = 'block';
+//        }
   // Function to fetch and display pending user approvals
   function confirm(){
     alert("Create backup")
   }
+
+  function searchFunction() {
+            const input = document.getElementById('searchField');
+            const filter = input.value.toUpperCase();
+            const tableRows = document.getElementById('pendingUserApprovals').getElementsByTagName('tr');
+
+            for (let i = 0; i < tableRows.length; i++) {
+                let row = tableRows[i];
+                let shouldDisplay = false;
+                const tableData = row.getElementsByTagName('td');
+                
+                for (let j = 0; j < tableData.length; j++) {
+                    let cell = tableData[j];
+                    if (cell) {
+                        let textValue = cell.textContent || cell.innerText;
+                        if (textValue.toUpperCase().indexOf(filter) > -1) {
+                            shouldDisplay = true;
+                            break;
+                        }
+                    }
+                }
+
+                if (shouldDisplay) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            }
+        }
+
+
   function displayPendingUserApprovals() {
       fetch('/api/pending_users')
           .then(response => response.json())

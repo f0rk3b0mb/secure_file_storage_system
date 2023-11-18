@@ -1,23 +1,23 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>Dashboard</title>
-    <link rel="stylesheet" type="text/css" href="/static/css/main.css" />
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  </head>
-  <body>
-    <div class="Dashboard">
+<head>
+  <title>Dashboard</title>
+  <link rel="stylesheet" type="text/css" href="/static/css/main.css" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+</head>
+<body>
+  <div class="Dashboard">
     <div class="side_bar">
-    <div class="logo"><img src="/static/images/logo.png"></div>
-    <div class="link_bar">
-      <div class="links">
-        <button class="menu_item"><a href="/upload">upload files</a></button>
-        <button class="menu_item"><a href="/faq">help</a></button>
-        <button class="menu_item"><a href="/logout">logout</a></button>
+      <div class="logo"><img src="/static/images/logo.png"></div>
+      <div class="link_bar">
+        <div class="links">
+          <button class="menu_item"><a href="/upload">upload files</a></button>
+          <button class="menu_item"><a href="/faq">help</a></button>
+          <button class="menu_item"><a href="/logout">logout</a></button>
         </div>
-    </div>
-    <div class="footer"><b><p>SecureFileStorage @2023</p></b></div>
+      </div>
+      <div class="footer"><b><p>SecureFileStorage @2023</p></b></div>
     </div>
     <div class="right_side">
       <div class="top_bar">
@@ -25,133 +25,123 @@
       </div>
       <p>{{message}}</p>
 
-      <input placeholder="search" class="search" >
+      <input placeholder="search" class="search" onkeyup="filterFiles()">
 
-    <div class="view">
-      <div class="tabs">
-        <button class="tab_item" id="showPrivate">private</button> <!-- will add functionality to buttons-->
-        <button class="tab_item" id="showPublic">public</button>
-      </div>    
-    <div class="table">
-      <div class="mini_table" id="showPrivateFiles">
-        <h3>private files</h3>
-        <ul id="privateFileList"></ul>
+      <div class="view">
+        <div class="tabs">
+          <button class="tab_item" id="showPrivate">private</button>
+          <button class="tab_item" id="showPublic">public</button>
+        </div>
+        <div class="table">
+          <div class="mini_table" id="showPrivateFiles">
+            <h3>private files</h3>
+            <ul id="privateFileList"></ul>
+          </div>
+          <div class="mini_table" id="showPublicFiles">
+            <h3>public files</h3>
+            <ul id="publicFileList"></ul>
+          </div>
+        </div>
       </div>
-    <div class="mini_table" id="showPublicFiles">
-      <h3>public files</h3>
-      <ul id="publicFileList"></ul>
-    </div>
     </div>
   </div>
-    </div>
 
-    <script>
-
-document.getElementById('showPrivateFiles').style.display = 'block';
-document.getElementById('showPublicFiles').style.display = 'none';
+  <script>
+    document.getElementById('showPrivateFiles').style.display = 'block';
+    document.getElementById('showPublicFiles').style.display = 'none';
 
     document.getElementById('showPrivate').addEventListener('click', function() {
-        showElement("showPrivateFiles");
-            hideElement('showPublicFiles');
-        });
+      showElement("showPrivateFiles");
+      hideElement('showPublicFiles');
+    });
 
-        document.getElementById('showPublic').addEventListener('click', function() {
-            showElement('showPublicFiles');
-            hideElement('showPrivateFiles');
-        });
+    document.getElementById('showPublic').addEventListener('click', function() {
+      showElement('showPublicFiles');
+      hideElement('showPrivateFiles');
+    });
 
-        function hideElement(elementId) {
-            document.getElementById(elementId).style.display = 'none';
-        }
-        function showElement(elementId) {
-            document.getElementById(elementId).style.display = 'block';
-        }
-      // Function to create a list item with a link and a request button for private files
-      function addPrivateFileListItem(fileName) {
-        const fileList = document.getElementById("privateFileList");
-        const listItem = document.createElement("li");
+    function hideElement(elementId) {
+      document.getElementById(elementId).style.display = 'none';
+    }
 
-        // Create a link for downloading
-        const fileLink = document.createElement("a");
-        fileLink.href = `/api/download/${fileName}`;
-        fileLink.textContent = fileName;
+    function showElement(elementId) {
+      document.getElementById(elementId).style.display = 'block';
+    }
 
-        // Create a request button for private files
-        //const requestButton = document.createElement("button");
-        //requestButton.textContent = "Request Deletion";
-        //requestButton.addEventListener("click", () => requestDelete(fileName));
-//
-        //// Append the link and request button to the list item
-        listItem.appendChild(fileLink);
-        //listItem.appendChild(requestButton);
+    // Function to create a list item with a link and a request button for private files
+    function addPrivateFileListItem(fileName) {
+      const fileList = document.getElementById("privateFileList");
+      const listItem = document.createElement("li");
 
-        // Append the list item to the private list
-        fileList.appendChild(listItem);
-      }
+      const fileLink = document.createElement("a");
+      fileLink.href = `/api/download/${fileName}`;
+      fileLink.textContent = fileName;
 
-      // Function to create a list item with a link for public files
-      function addPublicFileListItem(fileName) {
-        const fileList = document.getElementById("publicFileList");
-        const listItem = document.createElement("li");
+      listItem.appendChild(fileLink);
+      fileList.appendChild(listItem);
+    }
 
-        // Create a link for downloading
-        const fileLink = document.createElement("a");
-        fileLink.href = `/api/download/public/${fileName}`;
-        fileLink.textContent = fileName;
+    // Function to create a list item with a link for public files
+    function addPublicFileListItem(fileName) {
+      const fileList = document.getElementById("publicFileList");
+      const listItem = document.createElement("li");
 
-        // Append the link to the list item
-        listItem.appendChild(fileLink);
+      const fileLink = document.createElement("a");
+      fileLink.href = `/api/download/public/${fileName}`;
+      fileLink.textContent = fileName;
 
-        // Append the list item to the public list
-        fileList.appendChild(listItem);
-      }
+      listItem.appendChild(fileLink);
+      fileList.appendChild(listItem);
+    }
 
-      // Fetch the list of files and create list items with links and request buttons for private files
-      function fetchFileList() {
-        fetch("/api/viewFiles")
-          .then((response) => response.json())
-          .then((data) => {
-            const privateFileList = document.getElementById("privateFileList");
-            const publicFileList = document.getElementById("publicFileList");
-            privateFileList.innerHTML = ""; // Clear the private list
-            publicFileList.innerHTML = ""; // Clear the public list
+    // Fetch the list of files and create list items with links for private and public files
+    function fetchFileList() {
+      fetch("/api/viewFiles")
+        .then((response) => response.json())
+        .then((data) => {
+          const privateFileList = document.getElementById("privateFileList");
+          const publicFileList = document.getElementById("publicFileList");
+          privateFileList.innerHTML = "";
+          publicFileList.innerHTML = "";
 
-            data.private.forEach((fileName) => {
-              addPrivateFileListItem(fileName);
-            });
-
-            data.public.forEach((fileName) => {
-              addPublicFileListItem(fileName);
-            });
+          data.private.forEach((fileName) => {
+            addPrivateFileListItem(fileName);
           });
-      }
 
-      // Send a request for file deletion
-      function requestDelete(fileName) {
-        fetch("/api/deleteFiles", {
-          method: "POST",
-          body: new URLSearchParams({ file_name: fileName }),
-          headers: {
-            "Content-Type": "application/x-www-form-urlencoded",
-          },
-        })
-          .then((response) => {
-            if (response.ok) {
-              alert(
-                "Your deletion request has been sent to the admin for approval."
-              );
-            } else {
-              console.error("Failed to send deletion request");
-            }
-          })
-          .catch((error) => {
-            console.error("Error:", error);
+          data.public.forEach((fileName) => {
+            addPublicFileListItem(fileName);
           });
-      }
+        });
+    }
 
-      // Initial fetch of the file list when the page loads
-      fetchFileList();
-      
-    </script>
-  </body>
+    // Function to filter files based on search input
+    function filterFiles() {
+      const input = document.querySelector('.search');
+      const filter = input.value.toUpperCase();
+      const privateFiles = document.querySelectorAll('#privateFileList li');
+      const publicFiles = document.querySelectorAll('#publicFileList li');
+
+      privateFiles.forEach((file) => {
+        const fileName = file.textContent || file.innerText;
+        if (fileName.toUpperCase().indexOf(filter) > -1) {
+          file.style.display = '';
+        } else {
+          file.style.display = 'none';
+        }
+      });
+
+      publicFiles.forEach((file) => {
+        const fileName = file.textContent || file.innerText;
+        if (fileName.toUpperCase().indexOf(filter) > -1) {
+          file.style.display = '';
+        } else {
+          file.style.display = 'none';
+        }
+      });
+    }
+
+    // Initial fetch of the file list when the page loads
+    fetchFileList();
+  </script>
+</body>
 </html>
