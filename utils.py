@@ -11,7 +11,7 @@ from database import User
 # encryptor
 # Generate a random encryption key (you should keep this key secret)
 #SECRET_KEY = Fernet.generate_key()
-SECRET_KEY = "2yMmcrPl1qOwX71EepqnyzW1jdy5gPdL6ddF5UcMABY="
+SECRET_KEY = "2yMmcrPl1qOwX71EepqnyzW1jdy5gPdL6ddF5UcMABY=" # secret should be stored in environ
 cipher_suite = Fernet(SECRET_KEY)
 
 def encrypt_file(file_path):

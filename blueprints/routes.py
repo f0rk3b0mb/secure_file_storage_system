@@ -1,11 +1,10 @@
-from flask import Blueprint, render_template, redirect, url_for, request, flash, session ,jsonify , make_response
+from flask import Blueprint, render_template, redirect, url_for, request, session ,jsonify , make_response
 import os
 from database import db, bcrypt , User , File , Backups
 from utils import calculate_sha256, encrypt_file , decrypt_file , login_required , admin_required
 import datetime
 from  report_generator import generate_files_report, generate_users_report , generate_backups_report
 import subprocess
-import datetime
 
 web = Blueprint('web', __name__)
 api = Blueprint('api', __name__)
@@ -77,6 +76,12 @@ def register():
         role = request.form.get("role")
 
 
+        #remove bad characters
+        for i in ["{","}","(",")","<",">","/","\\"]:
+            if i in username:
+                return render_template("register.html",message="Illegal chracters in username")
+
+
         # Check if the username is already taken
         existing_user = User.query.filter_by(email=email).first()
         if existing_user:
@@ -137,6 +142,12 @@ def addFiles():
 
     if file.filename == '':
         return render_template("upload.html",status='No selected file')
+    
+    #prevent  path transversal
+    for i in ["/","../","\\","..\\"]:
+        if i in file.filename:
+            return render_template("upload.html",status="illegal characters in filename")
+              
 
     # Save the file in the 'uploads/username' directory
     if permission_level == "1":
@@ -184,6 +195,11 @@ def addFiles():
 @api.route('/download/<file_name>')
 @login_required
 def download_file(file_name):
+        
+        for i in ["/","../","\\","..\\"]:
+            if i in file_name:
+                return "illegal characters in filename"
+        
         file_path = os.path.join('uploads',session['username'], file_name)
 
         # Decrypt the file and get the Flask response
@@ -197,6 +213,11 @@ def download_file(file_name):
 
 @api.route('/download/public/<file_name>')
 def download_public_file(file_name):
+    
+    for i in ["/","../","\\","..\\"]:
+        if i in file_name:
+            return "illegal characters in filename"
+        
     if file_name == "manual":
         #download user_manual
         file_path = os.path.join("static","user_manual.pdf")
@@ -204,6 +225,7 @@ def download_public_file(file_name):
         response = make_response(f.read())
         response.headers['Content-Type'] = 'application/pdf'
         response.headers['Content-Disposition'] = f'inline; filename=report.pdf'
+        f.close()
         return(response)
     else:
         file_path = os.path.join('uploads','public', file_name)

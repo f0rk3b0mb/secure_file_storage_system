@@ -1,61 +1,46 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>Register</title>
-    <link rel="stylesheet" type="text/css" href="/static/css/main.css" />
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  </head>
-  <body>
-    <div class="body">
+
+<head>
+  <title>Register</title>
+  <link rel="stylesheet" type="text/css" href="/static/css/main.css" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+</head>
+
+<body>
+  <div class="body">
     <div class="loginForm">
-    <h1>Register</h1>
-    <div id="messages"><p>{{message}}</p><br><p id="password-feedback"></p></div>
-    <form id="registerForm" method="POST" action="/register">
-      <input
-        type="email"
-        id="email"
-        name="email"
-        placeholder="email"
-        required
-      /><br />
-      <input
-        type="text"
-        id="username"
-        name="username"
-        placeholder="username"
-        required
-      /><br />
-      <input
-        type="password"
-        id="password"
-        name="password"
-        placeholder="password"
-        required
-      />
-      <br />
-      <input
-        type="password"
-        id="confirmPassword"
-        name="confirm_password"
-        placeholder="confirm password"
-        required
-      /><br />
-      <br>
-      <select name="role" id="role">
-        <option value="exams">Examination officer</option>
-        <option value="admission">Admission officer</option>
-    </select>
-    <br>
-    <br>
-      <input type="submit" value="Register" />
-    </form>
+      <h1>Register</h1>
+      <div id="messages">
+        <p>{{message}}</p><br>
+        <p id="password-feedback"></p>
+      </div>
+      <form id="registerForm" method="POST" action="/register">
+        <input type="email" id="email" name="email" placeholder="email" required /><br />
+        <input type="text" id="username" name="username" placeholder="username" required /><br />
+        <input type="password" id="password" name="password" placeholder="password" required />
+        <br />
+        <input type="checkbox" id="showPassword" /><label for="showPassword">Show Password</label>
+        <br>
+        <input type="password" id="confirmPassword" name="confirm_password" placeholder="confirm password"
+          required /><br />
+        <br>
+        <select name="role" id="role">
+          <option value="exams">Examination officer</option>
+          <option value="admission">Admission officer</option>
+        </select>
+        <br>
+        <br>
+        <input type="submit" value="Register" />
+      </form>
     </div>
     <a href="/login">login??</a>
     <div class="footer">
       <h4>Secure file storage system @2023</h4>
     </div>
-</div>
-    <script src="static/js/main.js"></script>
-  </body>
+  </div>
+  <script src="static/js/main.js"></script>
+</body>
+
 </html>
