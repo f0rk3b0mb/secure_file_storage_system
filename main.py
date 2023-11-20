@@ -2,10 +2,13 @@ from flask import Flask
 from database import db, bcrypt
 from blueprints.routes import web, api
 from database import User  # Replace 'YourModel' with your actual model
+from datetime import timedelta
 #from flask_sslify import SSLify
 
 app = Flask(__name__)
 #sslify = SSLify(app)
+
+app.permanent_session_lifetime = timedelta(minutes=5)
 
 # Load your Flask app configuration here
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///site.db'

@@ -3,7 +3,7 @@ import os
 from database import db, bcrypt , User , File , Backups
 from utils import calculate_sha256, encrypt_file , decrypt_file , login_required , admin_required
 import datetime
-from  report_generator import generate_files_report, generate_users_report
+from  report_generator import generate_files_report, generate_users_report , generate_backups_report
 import subprocess
 import datetime
 
@@ -14,6 +14,19 @@ api = Blueprint('api', __name__)
 @web.route("/")
 def index():
     return render_template("landing.html")
+
+
+@web.before_request
+def before_request():
+    if 'user_id' in session and session.permanent:
+        session.modified = True  # Reset the session timer on each request
+
+    # Define a list of allowed endpoints for non-logged-in users
+    allowed_endpoints = ['web.login', 'web.register', 'web.index']  # Add more endpoints as needed
+
+    # Check if the user is not logged in and not accessing allowed endpoints
+    if not session.get('user_id') and request.endpoint not in allowed_endpoints:
+        return redirect(url_for('web.login'))
 
 @web.route("/dashboard")
 @login_required
@@ -147,24 +160,24 @@ def addFiles():
     return render_template("upload.html",status=sha256_hash)
     
 
-@api.route("/deleteFiles", methods=["POST"])
-@login_required
-def delete_file():
-    file_name = request.form.get("file_name")
-
-    if file_name:
-        file_path = os.path.join("uploads", session["username"], file_name)
-
-        if os.path.exists(file_path):
-            # Mark the file as pending for deletion in the database
-            file = File.query.filter_by(file_name=file_name).first()
-
-            if file:
-                file.is_pending_deletion = "True"
-                db.session.commit()
-                return "Deletion of file pending approval"
-            else:
-                return "File not found or could not be marked for deletion in the database"
+#@api.route("/deleteFiles", methods=["POST"])
+#@login_required
+#def delete_file():
+#    file_name = request.form.get("file_name")
+#
+#    if file_name:
+#        file_path = os.path.join("uploads", session["username"], file_name)
+#
+#        if os.path.exists(file_path):
+#            # Mark the file as pending for deletion in the database
+#            file = File.query.filter_by(file_name=file_name).first()
+#
+#            if file:
+#                file.is_pending_deletion = "True"
+#                db.session.commit()
+#                return "Deletion of file pending approval"
+#            else:
+#                return "File not found or could not be marked for deletion in the database"
 
 
 
@@ -227,45 +240,45 @@ def get_pending_users():
     # Return the pending user details in JSON format using jsonify
     return jsonify(pending_user_details)
 
-@api.route("/pending_deletion_requests", methods=["GET"])
-@admin_required
-def get_pending_deletion_requests():
-    # Find all files that are pending deletion
-    pending_deletion_files = File.query.filter_by(is_pending_deletion="True").all()
-    
-    pending_files_details = []
-
-    for file in pending_deletion_files:
-        file_detail = {
-            'file_id': file.id,
-            'filename': file.file_name,
-            'owner': file.owner_id,
-            'permission': file.permission_level,
-        }
-        pending_files_details.append(file_detail)
-    
-    return jsonify(pending_files_details)
-
-
-@api.route("/approve_deletion/<string:file_id>", methods=["POST"])
-@admin_required
-def approve_deletion(file_id):
-    # Find the file by name
-    file = File.query.filter_by(id=file_id).first()
-
-    if file and file.is_pending_deletion:
-        
-        os.remove(file.file_path)
-
-        # Delete the file record from the database
-        db.session.delete(file)
-        db.session.commit()
-
-        return jsonify({"message": "File deleted and record removed."})
-    else:
-        return jsonify({"message": "File not found or not pending deletion."})
-
-
+#@api.route("/pending_deletion_requests", methods=["GET"])
+#@admin_required
+#def get_pending_deletion_requests():
+#    # Find all files that are pending deletion
+#    pending_deletion_files = File.query.filter_by(is_pending_deletion="True").all()
+#    
+#    pending_files_details = []
+#
+#    for file in pending_deletion_files:
+#        file_detail = {
+#            'file_id': file.id,
+#            'filename': file.file_name,
+#            'owner': file.owner_id,
+#            'permission': file.permission_level,
+#        }
+#        pending_files_details.append(file_detail)
+#    
+#    return jsonify(pending_files_details)
+#
+#
+#@api.route("/approve_deletion/<string:file_id>", methods=["POST"])
+#@admin_required
+#def approve_deletion(file_id):
+#    # Find the file by name
+#    file = File.query.filter_by(id=file_id).first()
+#
+#    if file and file.is_pending_deletion:
+#        
+#        os.remove(file.file_path)
+#
+#        # Delete the file record from the database
+#        db.session.delete(file)
+#        db.session.commit()
+#
+#        return jsonify({"message": "File deleted and record removed."})
+#    else:
+#        return jsonify({"message": "File not found or not pending deletion."})
+#
+#
 
 
 @api.route('/approve_user/<int:user_id>', methods=['POST'])
@@ -288,8 +301,24 @@ def approve_user(user_id):
 
     return jsonify({'error': 'Invalid request method.'}), 405
 
+@api.route('/reject_user/<int:user_id>', methods=['POST'])
+@admin_required
+def reject_user(user_id):
+    # Check if the request is a POST request
+    if request.method == 'POST':
+        # Find the user by ID
+        user = User.query.get(user_id)
+        
+        if user:
+            db.session.delete(user)
+            db.session.commit()
+            return jsonify({'message': 'User has been removed'}), 200
+        else:
+            return jsonify({'error': 'User not found.'}), 404
 
-from flask import request
+    return jsonify({'error': 'Invalid request method.'}), 405
+
+
 
 @web.route("/users", methods=["GET", "POST"])
 @admin_required
@@ -352,8 +381,6 @@ def generate_report():
             users = User.query.all()
             pdf_data = generate_users_report(users)
             filename = datetime.datetime.now().isoformat() + '.pdf'
-            with open(os.path.join('backups', filename), 'wb') as f:
-                f.write(pdf_data)
             response = make_response(pdf_data)
             response.headers['Content-Type'] = 'application/pdf'
             response.headers['Content-Disposition'] = f'inline; filename=users_report.pdf'        
@@ -362,22 +389,18 @@ def generate_report():
             files = File.query.all()
             pdf_data = generate_files_report(files)
             filename = datetime.datetime.now().isoformat() + '.pdf'
-            with open(os.path.join('backups', filename), 'wb') as f:
-                f.write(pdf_data)
             response = make_response(pdf_data)
             response.headers['Content-Type'] = 'application/pdf'
             response.headers['Content-Disposition'] = f'inline; filename=files_report.pdf'        
             return response
-        #elif request.form.get("selected_type") == "backups":
-        #    files = File.query.all()
-        #    pdf_data = generate_files_report(files)
-        #    filename = datetime.datetime.now().isoformat() + '.pdf'
-        #    with open(os.path.join('backups', filename), 'wb') as f:
-        #        f.write(pdf_data)
-        #    response = make_response(pdf_data)
-        #    response.headers['Content-Type'] = 'application/pdf'
-        #    response.headers['Content-Disposition'] = f'inline; filename=files_report.pdf'        
-        #    return response
+        elif request.form.get("selected_type") == "backups":
+            backups = Backups.query.all()
+            pdf_data = generate_backups_report(backups)
+            filename = datetime.datetime.now().isoformat() + '.pdf'
+            response = make_response(pdf_data)
+            response.headers['Content-Type'] = 'application/pdf'
+            response.headers['Content-Disposition'] = f'inline; filename=backups_report.pdf'        
+            return response
 
 
 ##backup

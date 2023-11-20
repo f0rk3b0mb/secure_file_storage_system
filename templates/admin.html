@@ -169,6 +169,11 @@
                       approveButton.textContent = 'Approve';
                       approveButton.addEventListener('click', () => approveUser(user.id));
                       actionCell.appendChild(approveButton);
+                      const rejectCell = row.insertCell(4);
+                      const rejectButton = document.createElement('button');
+                      rejectButton.textContent = 'Reject';
+                      rejectButton.addEventListener('click', () => rejectUser(user.id));
+                      actionCell.appendChild(rejectButton);
                   });
               }
           });
@@ -190,54 +195,68 @@
           });
   }
 
-  // Function to fetch and display pending file deletion approvals
-  function displayPendingFileDeletionApprovals() {
-      fetch('/api/pending_deletion_requests')
-          .then(response => response.json())
-          .then(data => {
-              const pendingFileDeletionApprovals = document.getElementById('pendingFileDeletionApprovals');
-              pendingFileDeletionApprovals.innerHTML = ''; // Clear the existing content
-
-              if (data.length === 0) {
-                  const row = pendingFileDeletionApprovals.insertRow(0);
-                  const cell = row.insertCell(0);
-                  cell.colSpan = 5;
-                  cell.textContent = 'No pending file deletion approvals.';
-              } else {
-                  data.forEach(file => {
-                      const row = pendingFileDeletionApprovals.insertRow(pendingFileDeletionApprovals.rows.length);
-                      const fileNameCell = row.insertCell(0);
-                      fileNameCell.textContent = file.filename;
-                      const ownerCell = row.insertCell(1);
-                      ownerCell.textContent = file.owner;
-                      const permissionCell = row.insertCell(2);
-                      permissionCell.textContent = file.permission;
-                      const actionCell = row.insertCell(3);
-                      const approveButton = document.createElement('button');
-                      approveButton.textContent = 'Approve';
-                      approveButton.addEventListener('click', () => approveDeletion(file.file_id));
-                      actionCell.appendChild(approveButton);
-                  });
-              }
-          });
-  }
-
-  // Function to send an approval request for file deletion
-  function approveDeletion(fileId) {
-      // Send a POST request to approve file deletion
-      fetch(`/api/approve_deletion/${fileId}`, { method: 'POST' })
+  function rejectUser(userId) {
+      // Send a POST request to approve the user
+      fetch(`/api/reject_user/${userId}`, { method: 'POST' })
           .then(response => {
               if (response.status === 200) {
-                  // Display updated list of pending file deletion approvals
-                  displayPendingFileDeletionApprovals();
-                  // Optionally, you can update the UI to indicate that the deletion request has been approved
-                  alert('Deletion request approved successfully');
+                  // Display updated list of pending user approvals
+                  displayPendingUserApprovals();
+                  // Optionally, you can update the UI to indicate that the user has been approved
+                  alert('User removed successfully');
               } else {
-                  alert('Failed to approve deletion request');
+                  alert('Failed to approve user');
               }
           });
   }
 
+  //// Function to fetch and display pending file deletion approvals
+  //function displayPendingFileDeletionApprovals() {
+  //    fetch('/api/pending_deletion_requests')
+  //        .then(response => response.json())
+  //        .then(data => {
+  //            const pendingFileDeletionApprovals = document.getElementById('pendingFileDeletionApprovals');
+  //            pendingFileDeletionApprovals.innerHTML = ''; // Clear the existing content
+//
+  //            if (data.length === 0) {
+  //                const row = pendingFileDeletionApprovals.insertRow(0);
+  //                const cell = row.insertCell(0);
+  //                cell.colSpan = 5;
+  //                cell.textContent = 'No pending file deletion approvals.';
+  //            } else {
+  //                data.forEach(file => {
+  //                    const row = pendingFileDeletionApprovals.insertRow(pendingFileDeletionApprovals.rows.length);
+  //                    const fileNameCell = row.insertCell(0);
+  //                    fileNameCell.textContent = file.filename;
+  //                    const ownerCell = row.insertCell(1);
+  //                    ownerCell.textContent = file.owner;
+  //                    const permissionCell = row.insertCell(2);
+  //                    permissionCell.textContent = file.permission;
+  //                    const actionCell = row.insertCell(3);
+  //                    const approveButton = document.createElement('button');
+  //                    approveButton.textContent = 'Approve';
+  //                    approveButton.addEventListener('click', () => approveDeletion(file.file_id));
+  //                    actionCell.appendChild(approveButton);
+  //                });
+  //            }
+  //        });
+  //}
+//
+  //// Function to send an approval request for file deletion
+  //function approveDeletion(fileId) {
+  //    // Send a POST request to approve file deletion
+  //    fetch(`/api/approve_deletion/${fileId}`, { method: 'POST' })
+  //        .then(response => {
+  //            if (response.status === 200) {
+  //                // Display updated list of pending file deletion approvals
+  //                displayPendingFileDeletionApprovals();
+  //                // Optionally, you can update the UI to indicate that the deletion request has been approved
+  //                alert('Deletion request approved successfully');
+  //            } else {
+  //                alert('Failed to approve deletion request');
+  //            }
+  //        });
+  //}
   // Initial display of pending approvals
   displayPendingUserApprovals();
   displayPendingFileDeletionApprovals();
