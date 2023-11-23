@@ -1,43 +1,47 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FAQ</title>
     <link rel="stylesheet" href="/static/css/main.css">
 </head>
+
 <body>
     <div class="body">
-    <div class="top_bar">
-        <h4>Frequently asked questions</h4>
-        <link_bar>
-            <button><a href="/api/download/public/manual">User manual</a></button>
-            <button><a href="/dashboard">Dashboard</a></button>
-        </link_bar>
-    </div>
+        <div class="top_bar">
+            <h4>Frequently asked questions</h4>
+            <link_bar>
+                <a href="/api/download/public/manual"><button>user manual</button></a>
+                <a href="/dashboard"><button>dashboard</button></a>
+            </link_bar>
+        </div>
 
-    <div class="q_bar" onmouseover="show(this)" onmouseout="hide(this)">
-        <p>How are files secured?</p>
-        <answer hidden>Files are encrypted using AES encryption upon upload</answer>
-    </div>
-    <div  class="q_bar" onmouseover="show(this)" onmouseout="hide(this)">
-        <p>How can I delete my files?</p>
-        <answer  hidden>Files can be deleted by sending a deletion request to the admin</answer>
-    </div>
-    <div  class="q_bar" onmouseover="show(this)" onmouseout="hide(this)">
-        <p>Is there a backup for files I upload?</p>
-        <answer hidden>The system creates a copy of files uploaded</answer>
-    </div>
+        <div class="q_bar" onmouseover="show(this)" onmouseout="hide(this)">
+            <p>How are files secured?</p>
+            <answer hidden>Files are encrypted using AES encryption upon upload</answer>
+        </div>
+        <div class="q_bar" onmouseover="show(this)" onmouseout="hide(this)">
+            <p>How can I delete my files?</p>
+            <answer hidden>Files can be deleted by sending a deletion request to the admin</answer>
+        </div>
+        <div class="q_bar" onmouseover="show(this)" onmouseout="hide(this)">
+            <p>Is there a backup for files I upload?</p>
+            <answer hidden>The system creates a copy of files uploaded</answer>
+        </div>
 
-    <br>
-    <br>
-    <p>For more queries, contact the system administrator <a href="mailto:admin@securestorage.web">admin@securestorage.web</a></p>
+        <br>
+        <br>
+        <p>For more queries, contact the system administrator <a
+                href="mailto:admin@securestorage.web">admin@securestorage.web</a></p>
 
-    <div class="footer">
-        <h4>Secure file storage system @2023</h4>
-    </div>
+        <div class="footer">
+            <h4>Secure file storage system @2023</h4>
+        </div>
     </div>
 
     <script src="/static/js/main.js"></script>
 </body>
+
 </html>

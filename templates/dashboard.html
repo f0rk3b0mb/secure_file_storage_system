@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html>
+
 <head>
   <title>Dashboard</title>
   <link rel="stylesheet" type="text/css" href="/static/css/main.css" />
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 </head>
+
 <body>
   <div class="Dashboard">
     <div class="side_bar">
@@ -17,7 +19,9 @@
           <button class="menu_item"><a href="/logout">logout</a></button>
         </div>
       </div>
-      <div class="footer"><b><p>SecureFileStorage @2023</p></b></div>
+      <div class="footer"><b>
+          <p>SecureFileStorage @2023</p>
+        </b></div>
     </div>
     <div class="right_side">
       <div class="top_bar">
@@ -50,12 +54,12 @@
     document.getElementById('showPrivateFiles').style.display = 'block';
     document.getElementById('showPublicFiles').style.display = 'none';
 
-    document.getElementById('showPrivate').addEventListener('click', function() {
+    document.getElementById('showPrivate').addEventListener('click', function () {
       showElement("showPrivateFiles");
       hideElement('showPublicFiles');
     });
 
-    document.getElementById('showPublic').addEventListener('click', function() {
+    document.getElementById('showPublic').addEventListener('click', function () {
       showElement('showPublicFiles');
       hideElement('showPrivateFiles');
     });
@@ -144,4 +148,5 @@
     fetchFileList();
   </script>
 </body>
+
 </html>

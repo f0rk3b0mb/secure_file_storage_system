@@ -21,7 +21,7 @@ def before_request():
         session.modified = True  # Reset the session timer on each request
 
     # Define a list of allowed endpoints for non-logged-in users
-    allowed_endpoints = ['web.login', 'web.register', 'web.index']  # Add more endpoints as needed
+    allowed_endpoints = ['web.login', 'web.register', 'web.index' , 'web.faq']  # Add more endpoints as needed
 
     # Check if the user is not logged in and not accessing allowed endpoints
     if not session.get('user_id') and request.endpoint not in allowed_endpoints:

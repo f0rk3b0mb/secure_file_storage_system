@@ -1,20 +1,25 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>Manage Files</title>
-    <link rel="stylesheet" type="text/css" href="/static/css/main.css" />
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  </head>
-  <body>
-    <div class="body">
-    <div class="top_bar"><h3>Manage Files</h3>
-      <a href="/admin">admin</a></div>
-      <br>
-      <br>
-    
 
-    <table border="1">
+<head>
+  <title>Manage Files</title>
+  <link rel="stylesheet" type="text/css" href="/static/css/main.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+
+<body>
+  <div class="body">
+    <div class="top_bar">
+      <h3>Manage Files</h3>
+      <a href="/admin">admin</a>
+    </div>
+    <br>
+    <br>
+
+    <input type="text" id="searchInput" class="search" placeholder="Search for file...">
+
+    <table border="1" id="fileTable">
       <thead>
         <tr>
           <th>File Name</th>
@@ -34,7 +39,6 @@
           <td>{{ file.upload_date }}</td>
           <td>{{ file.is_pending_deletion }}</td>
           <td>{{ file.permission_level }}</td>
-          </td>
         </tr>
         {% endfor %}
       </tbody>
@@ -43,7 +47,29 @@
     <div class="footer">
       <h4>Secure file storage system @2023</h4>
     </div>
+  </div>
 
-    </div>
-  </body>
+  <script>
+    document.getElementById('searchInput').addEventListener('keyup', function () {
+      const searchText = this.value.toUpperCase();
+      const rows = document.querySelectorAll('#fileTable tbody tr');
+
+      rows.forEach(row => {
+        let found = false;
+        row.querySelectorAll('td').forEach(cell => {
+          const text = cell.textContent.toUpperCase();
+          if (text.includes(searchText)) {
+            found = true;
+          }
+        });
+        if (found) {
+          row.style.display = '';
+        } else {
+          row.style.display = 'none';
+        }
+      });
+    });
+  </script>
+</body>
+
 </html>

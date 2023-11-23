@@ -34,8 +34,9 @@ class Backups(db.Model):
     sha256sum= db.Column(db.Integer)
 
 
-class Roles(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    role_name = db.Column(db.String(255))
-    role_description= db.Column(db.String(255))
+class Permission(db.Model):
+    id = db.Column(db.Integer, db.ForeignKey('file.permission_level'), primary_key=True)
+    permission = db.Column(db.String(255), nullable=False)
+
+
 

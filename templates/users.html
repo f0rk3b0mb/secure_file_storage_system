@@ -1,13 +1,15 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>Manage Users</title>
-    <link rel="stylesheet" type="text/css" href="/static/css/main.css" />
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  </head>
-  <body>
-    <div class="body">
+
+<head>
+  <title>Manage Users</title>
+  <link rel="stylesheet" type="text/css" href="/static/css/main.css" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+</head>
+
+<body>
+  <div class="body">
     <div class="top_bar">
       <h3>Manage Users</h3>
       <a href="/admin">admin</a>
@@ -15,7 +17,9 @@
     <br />
     <br />
 
-    <table border="1">
+    <input type="text" id="searchInput" class="search" placeholder="Search for user...">
+
+    <table border="1" id="userTable">
       <thead>
         <tr>
           <th>Username</th>
@@ -34,11 +38,7 @@
           <td>{{ user.email }}</td>
           <td>
             <form method="POST">
-              <input
-                type="hidden"
-                name="user_id_to_delete"
-                value="{{ user.id }}"
-              />
+              <input type="hidden" name="user_id_to_delete" value="{{ user.id }}">
               <button type="submit">Delete</button>
             </form>
           </td>
@@ -49,6 +49,29 @@
     <div class="footer">
       <h4>Secure file storage system @2023</h4>
     </div>
-    </div>
-  </body>
+  </div>
+
+  <script>
+    document.getElementById('searchInput').addEventListener('keyup', function () {
+      const searchText = this.value.toUpperCase();
+      const rows = document.querySelectorAll('#userTable tbody tr');
+
+      rows.forEach(row => {
+        let found = false;
+        row.querySelectorAll('td').forEach(cell => {
+          const text = cell.textContent.toUpperCase();
+          if (text.includes(searchText)) {
+            found = true;
+          }
+        });
+        if (found) {
+          row.style.display = '';
+        } else {
+          row.style.display = 'none';
+        }
+      });
+    });
+  </script>
+</body>
+
 </html>
