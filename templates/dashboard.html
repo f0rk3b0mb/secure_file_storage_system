@@ -3,102 +3,292 @@
 
 <head>
   <title>Dashboard</title>
-  <link rel="stylesheet" type="text/css" href="/static/css/main.css" />
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <!-- Replace with your local Bootstrap CSS link -->
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    /* Add custom styles here */
+    .logo {
+      display: flex;
+      width: 240px;
+      height: 64px;
+      padding: 20px;
+      align-items: center;
+      gap: var(--spacing-s, 12px);
+      flex-shrink: 0;
+      border-radius: var(--corner-radius-none, 0px);
+    }
+
+    .side_bar {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      height: 100vh;
+      flex-shrink: 0;
+      border-right: 1px solid var(--content-stroke, black);
+      background: var(--background-blue, #F7F8FA);
+      border-width: 3px;
+    }
+
+    .footer {
+      display: flex;
+      width: 240px;
+      padding: 16px 20px;
+      flex-direction: column;
+      justify-content: center;
+      align-items: flex-start;
+      gap: var(--spacing-s, 12px);
+      border-top: 1px solid var(--content-stroke, #E0E4F0);
+      background: var(--background-blue, #F7F8FA);
+
+    }
+
+    .search {
+      width: 300px;
+      height: 30px;
+    }
+
+    .right_side {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      flex: 1 0 0;
+      align-self: stretch;
+    }
+
+    .top_bar {
+      display: flex;
+      padding: 16px 40px;
+      justify-content: space-between;
+      align-items: center;
+      align-self: stretch;
+      border-radius: var(--corner-radius-none, 0px);
+      border-bottom: 1px solid var(--content-stroke, #E0E4F0);
+      border-width: 3px;
+      border-color: black;
+    }
+
+    .view {
+      display: flex;
+      padding: 24px 40px 40px 40px;
+      flex-direction: column;
+      align-items: center;
+      flex: 1 0 0;
+      align-self: stretch;
+    }
+
+    .logo img {
+      width: 100px;
+      height: 100px;
+      border-radius: 30px;
+      margin-left: 100px;
+    }
+
+    .logo {
+      display: flex;
+      width: 400px;
+      height: 150px;
+      align-items: center;
+      border-radius: var(--corner-radius-none, 0px);
+    }
+  </style>
 </head>
 
 <body>
-  <div class="Dashboard">
-    <div class="side_bar">
-      <div class="logo"><img src="/static/images/logo.png"></div>
-      <div class="link_bar">
-        <div class="links">
-          <button class="menu_item"><a href="/upload">upload files</a></button>
-          <button class="menu_item"><a href="/faq">help</a></button>
-          <button class="menu_item"><a href="/logout">logout</a></button>
-        </div>
-      </div>
-      <div class="footer"><b>
-          <p>SecureFileStorage @2023</p>
-        </b></div>
-    </div>
-    <div class="right_side">
-      <div class="top_bar">
-        <h3>Welcome, {{username}}</h3>
-      </div>
-      <p>{{message}}</p>
-
-      <input placeholder="search" class="search" onkeyup="filterFiles()">
-
-      <div class="view">
-        <div class="tabs">
-          <button class="tab_item" id="showPrivate">private</button>
-          <button class="tab_item" id="showPublic">public</button>
-        </div>
-        <div class="table">
-          <div class="mini_table" id="showPrivateFiles">
-            <h3>private files</h3>
-            <ul id="privateFileList"></ul>
+  <div class="container-fluid">
+    <div class="row">
+      <div class="side_bar col-md-3">
+        <!-- Side bar -->
+        <div class="logo"><img src="/static/images/logo.png"></div>
+        <div class="link_bar mt-4">
+          <div class="list-group">
+            <a href="/upload" class="list-group-item list-group-item-action">Upload Files</a>
+            <a href="/faq" class="list-group-item list-group-item-action">Help</a>
+            <a href="/logout" class="list-group-item list-group-item-action">Logout</a>
           </div>
-          <div class="mini_table" id="showPublicFiles">
-            <h3>public files</h3>
-            <ul id="publicFileList"></ul>
+        </div>
+        <div class="footer mt-auto"><b>
+            <p>SecureFileStorage @2023</p>
+          </b></div>
+      </div>
+      <div class="col-md-9">
+        <!-- Right side -->
+        <div class="top_bar mt-4">
+          <h3>Welcome, {{username}}</h3>
+        </div>
+        <p>{{message}}</p>
+
+        <input placeholder="Search" class="search form-control mb-3" onkeyup="filterFiles()">
+
+        <div class="view">
+          <ul class="nav nav-tabs">
+            <li class="nav-item">
+              <button class="nav-link active" id="showPrivate" onclick="showTab('private')">Private</button>
+            </li>
+            <li class="nav-item">
+              <button class="nav-link" id="showPublic" onclick="showTab('public')">Public</button>
+            </li>
+          </ul>
+          <div class="tab-content mt-3">
+            <div class="tab-pane fade show active" id="privateFiles">
+              <h4>Private Files</h4>
+              <div class="card-columns" id="privateFileList"></div>
+            </div>
+            <div class="tab-pane fade" id="publicFiles">
+              <h4>Public Files</h4>
+              <div class="card-columns" id="publicFileList"></div>
+            </div>
           </div>
         </div>
       </div>
     </div>
   </div>
 
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
   <script>
-    document.getElementById('showPrivateFiles').style.display = 'block';
-    document.getElementById('showPublicFiles').style.display = 'none';
+    // Your JavaScript functions here
+    function initializeTabs() {
+      document.getElementById('privateFiles').classList.add('show', 'active');
+      document.getElementById('publicFiles').classList.remove('show', 'active');
+    }
 
+    // Function to show the private files tab
+    function showPrivateFiles() {
+      document.getElementById('privateFiles').classList.add('show', 'active');
+      document.getElementById('publicFiles').classList.remove('show', 'active');
+    }
+
+    // Function to show the public files tab
+    function showPublicFiles() {
+      document.getElementById('privateFiles').classList.remove('show', 'active');
+      document.getElementById('publicFiles').classList.add('show', 'active');
+    }
+
+    // Add event listeners to the buttons
     document.getElementById('showPrivate').addEventListener('click', function () {
-      showElement("showPrivateFiles");
-      hideElement('showPublicFiles');
+      showPrivateFiles();
     });
 
     document.getElementById('showPublic').addEventListener('click', function () {
-      showElement('showPublicFiles');
-      hideElement('showPrivateFiles');
+      showPublicFiles();
     });
 
-    function hideElement(elementId) {
-      document.getElementById(elementId).style.display = 'none';
-    }
-
-    function showElement(elementId) {
-      document.getElementById(elementId).style.display = 'block';
-    }
-
+    // Call the initializeTabs function when the page loads
+    document.addEventListener('DOMContentLoaded', function () {
+      initializeTabs();
+    });
     // Function to create a list item with a link and a request button for private files
-    function addPrivateFileListItem(fileName) {
+    // Function to create a card for private files
+    function addPrivateFileCard(fileName) {
       const fileList = document.getElementById("privateFileList");
-      const listItem = document.createElement("li");
+      const card = document.createElement("div");
+      card.classList.add("card");
 
-      const fileLink = document.createElement("a");
-      fileLink.href = `/api/download/${fileName}`;
-      fileLink.textContent = fileName;
+      const cardBody = document.createElement("div");
+      cardBody.classList.add("card-body");
 
-      listItem.appendChild(fileLink);
-      fileList.appendChild(listItem);
+      const fileNameParagraph = document.createElement("p");
+      fileNameParagraph.textContent = fileName;
+
+      const downloadButton = document.createElement("button");
+      downloadButton.classList.add("btn", "btn-primary", "mr-2");
+      downloadButton.textContent = "Download";
+
+      downloadButton.addEventListener('click', function () {
+        // Add functionality to trigger file download here
+        // Example: You can redirect the user to the download link
+        window.location.href = `/api/download/${fileName}`;
+      });
+
+      const deleteButton = document.createElement("button");
+      deleteButton.classList.add("btn", "btn-danger");
+      deleteButton.textContent = "Delete";
+
+      deleteButton.addEventListener('click', function () {
+        fetch('/api/deleteFiles', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+          },
+          body: `file_name=${fileName}`
+        }).then(response => {
+          if (response.ok) {
+            card.remove();
+            alert("File archived succesfully") // Remove the card if deletion request is successful
+          } else {
+            console.error('Error deleting file:', response.statusText);
+            // Handle error deleting file
+          }
+        }).catch(error => {
+          console.error('Error deleting file:', error);
+          // Handle error deleting file
+        });
+      });
+
+      cardBody.appendChild(fileNameParagraph);
+      cardBody.appendChild(downloadButton);
+      cardBody.appendChild(deleteButton);
+      card.appendChild(cardBody);
+      fileList.appendChild(card);
     }
 
-    // Function to create a list item with a link for public files
-    function addPublicFileListItem(fileName) {
+    // Function to create a card for public files
+    function addPublicFileCard(fileName) {
       const fileList = document.getElementById("publicFileList");
-      const listItem = document.createElement("li");
+      const card = document.createElement("div");
+      card.classList.add("card");
 
-      const fileLink = document.createElement("a");
-      fileLink.href = `/api/download/public/${fileName}`;
-      fileLink.textContent = fileName;
+      const cardBody = document.createElement("div");
+      cardBody.classList.add("card-body");
 
-      listItem.appendChild(fileLink);
-      fileList.appendChild(listItem);
+      const fileNameParagraph = document.createElement("p");
+      fileNameParagraph.textContent = fileName;
+
+      const downloadButton = document.createElement("button");
+      downloadButton.classList.add("btn", "btn-primary", "mr-2");
+      downloadButton.textContent = "Download";
+
+      downloadButton.addEventListener('click', function () {
+        // Add functionality to trigger file download here
+        // Example: You can redirect the user to the download link
+        window.location.href = `/api/download/public/${fileName}`;
+      });
+
+      //const deleteButton = document.createElement("button");
+      //deleteButton.classList.add("btn", "btn-danger");
+      //deleteButton.textContent = "Delete";
+      //
+      //deleteButton.addEventListener('click', function () {
+      //  fetch('/api/deleteFiles', {
+      //    method: 'POST',
+      //    headers: {
+      //      'Content-Type': 'application/x-www-form-urlencoded'
+      //    },
+      //    body: `file_name=${fileName}`
+      //  }).then(response => {
+      //    if (response.ok) {
+      //      card.remove(); // Remove the card if deletion request is successful
+      //    } else {
+      //      console.error('Error deleting file:', response.statusText);
+      //      // Handle error deleting file
+      //    }
+      //  }).catch(error => {
+      //    console.error('Error deleting file:', error);
+      //    // Handle error deleting file
+      //  });
+      //});
+      cardBody.appendChild(fileNameParagraph);
+      cardBody.appendChild(downloadButton);
+      //cardBody.appendChild(deleteButton);
+      card.appendChild(cardBody);
+      fileList.appendChild(card);
     }
 
-    // Fetch the list of files and create list items with links for private and public files
+
+    // Fetch the list of files and create cards for private and public files
     function fetchFileList() {
       fetch("/api/viewFiles")
         .then((response) => response.json())
@@ -109,43 +299,48 @@
           publicFileList.innerHTML = "";
 
           data.private.forEach((fileName) => {
-            addPrivateFileListItem(fileName);
+            addPrivateFileCard(fileName);
           });
 
           data.public.forEach((fileName) => {
-            addPublicFileListItem(fileName);
+            addPublicFileCard(fileName);
           });
         });
     }
 
-    // Function to filter files based on search input
+
     function filterFiles() {
       const input = document.querySelector('.search');
       const filter = input.value.toUpperCase();
-      const privateFiles = document.querySelectorAll('#privateFileList li');
-      const publicFiles = document.querySelectorAll('#publicFileList li');
+      const privateFiles = document.querySelectorAll('#privateFileList .card');
+      const publicFiles = document.querySelectorAll('#publicFileList .card');
 
-      privateFiles.forEach((file) => {
-        const fileName = file.textContent || file.innerText;
-        if (fileName.toUpperCase().indexOf(filter) > -1) {
-          file.style.display = '';
+      privateFiles.forEach((card) => {
+        const fileName = card.querySelector('p').textContent.toUpperCase();
+        if (fileName.indexOf(filter) > -1) {
+          card.classList.remove('d-none'); // Show card
         } else {
-          file.style.display = 'none';
+          card.classList.add('d-none'); // Hide card
         }
       });
 
-      publicFiles.forEach((file) => {
-        const fileName = file.textContent || file.innerText;
-        if (fileName.toUpperCase().indexOf(filter) > -1) {
-          file.style.display = '';
+      publicFiles.forEach((card) => {
+        const fileName = card.querySelector('p').textContent.toUpperCase();
+        if (fileName.indexOf(filter) > -1) {
+          card.classList.remove('d-none'); // Show card
         } else {
-          file.style.display = 'none';
+          card.classList.add('d-none'); // Hide card
         }
       });
     }
 
-    // Initial fetch of the file list when the page loads
-    fetchFileList();
+
+
+    // Call fetchFileList function when the page loads
+    document.addEventListener('DOMContentLoaded', function () {
+      fetchFileList();
+    });
+
   </script>
 </body>
 

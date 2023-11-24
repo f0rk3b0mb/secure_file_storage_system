@@ -1,119 +1,228 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>Admin Dashboard</title>
-    <link rel="stylesheet" type="text/css" href="/static/css/main.css" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-</head>
-<body>
-    <div class="Dashboard">
+    <link rel="stylesheet" href="">
+    <style>
+        /* Your custom CSS styles can be retained here */
+        .logo {
+            display: flex;
+            width: 240px;
+            height: 64px;
+            padding: 20px;
+            align-items: center;
+            gap: var(--spacing-s, 12px);
+            flex-shrink: 0;
+            border-radius: var(--corner-radius-none, 0px);
+        }
 
-        <div class="side_bar">
-            <div class="logo"><img src="/static/images/logo.png"></div>
-            <div class="link_bar">
-              <div class="links">
-                    <button class="menu_item"><a href="/dashboard">dashboard</a></button>
-                    <button class="menu_item"><a href="/upload">upload files</a></button>
-                    <button class="menu_item"><a href="/logout">logout</a></button>
-                    <button class="menu_item"><a href="/register">register</a></button>
-                    <button class="menu_item"><a href="/users">users</a></button>
-                    <button class="menu_item"><a href="/files">files</a></button>
-                    <button class="menu_item" onclick="confirm()"><a href="/backup">backup</a></button>
-                    <button class="menu_item" ><a href="/viewBackups">viewBackups</a></button>
-                    <button class="menu_item"><a href="/report">report</a></button>
+        .side_bar {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 100vh;
+            flex-shrink: 0;
+            border-right: 1px solid var(--content-stroke, black);
+            background: var(--background-blue, #F7F8FA);
+            border-width: 3px;
+        }
+
+        .footer {
+            display: flex;
+            width: 240px;
+            padding: 16px 20px;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start;
+            gap: var(--spacing-s, 12px);
+            border-top: 1px solid var(--content-stroke, #E0E4F0);
+            background: var(--background-blue, #F7F8FA);
+
+        }
+
+        .search {
+            width: 300px;
+            height: 30px;
+        }
+
+        .right_side {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex: 1 0 0;
+            align-self: stretch;
+        }
+
+        .top_bar {
+            display: flex;
+            padding: 16px 40px;
+            justify-content: space-between;
+            align-items: center;
+            align-self: stretch;
+            border-radius: var(--corner-radius-none, 0px);
+            border-bottom: 1px solid var(--content-stroke, #E0E4F0);
+            border-width: 3px;
+            border-color: black;
+        }
+
+        .view {
+            display: flex;
+            padding: 24px 40px 40px 40px;
+            flex-direction: column;
+            align-items: center;
+            flex: 1 0 0;
+            align-self: stretch;
+        }
+
+        .logo img {
+            width: 100px;
+            height: 100px;
+            border-radius: 30px;
+            margin-left: 100px;
+        }
+
+        .logo {
+            display: flex;
+            width: 400px;
+            height: 150px;
+            align-items: center;
+            border-radius: var(--corner-radius-none, 0px);
+        }
+
+        </style
+    </style>
+</head>
+
+<body>
+    <div class="container-fluid">
+
+        <div class="row">
+
+            <!-- Sidebar -->
+            <div class="col-md-3 side_bar">
+                <div class="logo">
+                    <img src="/static/images/logo.png" class="img-fluid" alt="Logo">
+                </div>
+                <div class="link_bar">
+                    <div class="list-group">
+                        <a href="/dashboard" class="list-group-item list-group-item-action">Dashboard</a>
+                        <a href="/upload" class="list-group-item list-group-item-action">Upload Files</a>
+                        <a href="/users" class="list-group-item list-group-item-action">Users</a>
+                        <a href="/files" class="list-group-item list-group-item-action">Files</a>
+                        <a href="/backup" onclick="confirm()" class="list-group-item list-group-item-action">Backup</a>
+                        <a href="/viewBackups" class="list-group-item list-group-item-action">manageBackups</a>
+                        <a href="/report" class="list-group-item list-group-item-action">report</a>
+                        <a href="/logout" class="list-group-item list-group-item-action">Logout</a>
+                    </div>
+                </div>
+                <div class="footer">
+                    <p><b>SecureFileStorage @2023</b></p>
                 </div>
             </div>
-            <div class="footer"><b><p>SecureFileStorage @2023</p></b></div>
-        </div>
 
-        <div class="right_side">
-            <div class="top_bar">
-                <h3><center>Welcome, {{ username }}</center></h3>
-                
+            <!-- Main Content -->
+            <div class="col-md-9 right_side">
+                <div class="top_bar">
+                    <h3 class="text-center">Welcome, {{ username }}</h3>
                 </div>
 
-                <p>{{message}}</p>
+                <p>{{ message }}</p>
 
-                <input placeholder="Search" class="search" id="searchField" onkeyup="searchFunction()">
-                
+                <input placeholder="Search" class="form-control mb-3 search" id="searchField"
+                    onkeyup="searchFunction()">
 
-
+                <!-- Rest of your content here -->
+                <!-- You can use Bootstrap components and grid system to structure your content -->
                 <div class="view">
+                    <!-- Tabs section -->
                     <div class="tabs">
-                      <!--<button class="tab_item" id="showUsers">pending user approvals</button>--> <!-- will add functionality to buttons-->
-                      <!--<button class="tab_item" id="showFiles">pending file approvals</button>-->
-                    </div>    
-                    <div class="table">
-                        <div  id="pendingUsers" class="mini_table">
-                          <h3>pending users</h3>
-                          <table border="1">
-                            <thead>
-                                <tr>
-                                    
-                                    <th>Username</th>
-                                    <th>Email</th>
-                                    <th>Role</th>
-                                    <th>Action</th>
-                                </tr>
-                            </thead>
-                            <tbody id="pendingUserApprovals">
-                            </tbody>
-                        </table>
+                        <!-- Bootstrap-styled buttons -->
+                        <button class="btn btn-primary tab_item" id="showUsers">Pending User Approvals</button>
+                        <button class="btn btn-primary tab_item" id="showFiles">Pending File Approvals</button>
+                    </div>
+
+                    <!-- Table section -->
+                    <div class="table-responsive">
+                        <!-- Pending Users table -->
+                        <div id="pendingUsers" class="mini_table">
+                            <h3>Pending Users</h3>
+                            <table class="table table-bordered">
+                                <thead class="thead-dark">
+                                    <tr>
+                                        <th>Username</th>
+                                        <th>Email</th>
+                                        <th>Role</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="pendingUserApprovals">
+                                    <!-- Table rows will be populated dynamically -->
+                                </tbody>
+                            </table>
                         </div>
-                        <!--<div  id="pendingFiles" class="mini_table">-->
-                        <!--    <h3>pending file approvals</h3>-->
-                        <!--    <table border="1">-->
-                        <!--        <thead>-->
-                        <!--            -->
-                        <!--            -->
-                        <!--            <tr>-->
-                        <!--               -->
-                        <!--                <th>File Name</th>-->
-                        <!--                <th>Owner</th>-->
-                        <!--                <th>Permission Level</th>-->
-                        <!--                <th>Action</th>-->
-                        <!--            </tr>-->
-                        <!--        </thead>-->
-                        <!--        <tbody id="pendingFileDeletionApprovals">-->
-                        <!--        </tbody>-->
-                        <!--    </table>-->
-                        <!--  </div>-->
-                  </div>
-                  </div>
 
-
+                        <!-- Pending Files table -->
+                        <div id="pendingFiles" class="mini_table">
+                            <h3>Pending File Approvals</h3>
+                            <table class="table table-bordered">
+                                <thead class="thead-dark">
+                                    <tr>
+                                        <th>File Name</th>
+                                        <th>Owner</th>
+                                        <th>Permission Level</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="pendingFileDeletionApprovals">
+                                    <!-- Table rows will be populated dynamically -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
 
+            </div>
+
+        </div>
     </div>
 
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
-<script>
-//document.getElementById('pendingUsers').style.display = 'block';
-//document.getElementById('pendingFiles').style.display = 'none';
-//
-//    document.getElementById('showUsers').addEventListener('click', function() {
-//        showElement("pendingUsers");
-//            hideElement('pendingFiles');
-//        });
-//
-//        document.getElementById('showFiles').addEventListener('click', function() {
-//            showElement('pendingFiles');
-//            hideElement('pendingUsers');
-//        });
-//
-//        function hideElement(elementId) {
-//            document.getElementById(elementId).style.display = 'none';
-//        }
-//        function showElement(elementId) {
-//            document.getElementById(elementId).style.display = 'block';
-//        }
-  // Function to fetch and display pending user approvals
-  function confirm(){
-    alert("Create backup")
-  }
 
-  function searchFunction() {
+    <script>
+        document.getElementById('pendingUsers').style.display = 'block';
+        document.getElementById('pendingFiles').style.display = 'none';
+
+        document.getElementById('showUsers').addEventListener('click', function () {
+            showElement("pendingUsers");
+            hideElement('pendingFiles');
+        });
+
+        document.getElementById('showFiles').addEventListener('click', function () {
+            showElement('pendingFiles');
+            hideElement('pendingUsers');
+        });
+
+        function hideElement(elementId) {
+            document.getElementById(elementId).style.display = 'none';
+        }
+
+        function showElement(elementId) {
+            document.getElementById(elementId).style.display = 'block';
+        }
+
+        // Function to fetch and display pending user approvals
+        function confirm() {
+            alert("Create backup")
+        }
+
+        function searchFunction() {
             const input = document.getElementById('searchField');
             const filter = input.value.toUpperCase();
             const tableRows = document.getElementById('pendingUserApprovals').getElementsByTagName('tr');
@@ -122,7 +231,7 @@
                 let row = tableRows[i];
                 let shouldDisplay = false;
                 const tableData = row.getElementsByTagName('td');
-                
+
                 for (let j = 0; j < tableData.length; j++) {
                     let cell = tableData[j];
                     if (cell) {
@@ -142,128 +251,82 @@
             }
         }
 
+        function displayPendingUserApprovals() {
+            fetch('/api/pending_users')
+                .then(response => response.json())
+                .then(data => {
+                    const pendingUserApprovals = document.getElementById('pendingUserApprovals');
+                    pendingUserApprovals.innerHTML = ''; // Clear the existing content
 
-  function displayPendingUserApprovals() {
-      fetch('/api/pending_users')
-          .then(response => response.json())
-          .then(data => {
-              const pendingUserApprovals = document.getElementById('pendingUserApprovals');
-              pendingUserApprovals.innerHTML = ''; // Clear the existing content
+                    if (data.length === 0) {
+                        const row = pendingUserApprovals.insertRow(0);
+                        const cell = row.insertCell(0);
+                        cell.colSpan = 5;
+                        cell.textContent = 'No pending user approvals.';
+                    } else {
+                        data.forEach(user => {
+                            const row = pendingUserApprovals.insertRow(pendingUserApprovals.rows.length);
+                            const usernameCell = row.insertCell(0);
+                            usernameCell.textContent = user.username;
+                            const emailCell = row.insertCell(1);
+                            emailCell.textContent = user.email;
+                            const roleCell = row.insertCell(2);
+                            roleCell.textContent = user.role;
+                            const actionCell = row.insertCell(3);
+                            const approveButton = document.createElement('button');
+                            approveButton.textContent = 'Approve';
+                            approveButton.className = 'btn btn-success mx-1'; // Bootstrap classes for buttons
+                            approveButton.addEventListener('click', () => approveUser(user.id));
+                            actionCell.appendChild(approveButton);
+                            const rejectCell = row.insertCell(4);
+                            const rejectButton = document.createElement('button');
+                            rejectButton.textContent = 'Reject';
+                            rejectButton.className = 'btn btn-danger mx-1'; // Bootstrap classes for buttons
+                            rejectButton.addEventListener('click', () => rejectUser(user.id));
+                            actionCell.appendChild(rejectButton);
+                        });
+                    }
+                });
+        }
 
-              if (data.length === 0) {
-                  const row = pendingUserApprovals.insertRow(0);
-                  const cell = row.insertCell(0);
-                  cell.colSpan = 5;
-                  cell.textContent = 'No pending user approvals.';
-              } else {
-                  data.forEach(user => {
-                      const row = pendingUserApprovals.insertRow(pendingUserApprovals.rows.length);
-                      const usernameCell = row.insertCell(0);
-                      usernameCell.textContent = user.username;
-                      const emailCell = row.insertCell(1);
-                      emailCell.textContent = user.email;
-                      const roleCell = row.insertCell(2);
-                      roleCell.textContent = user.role;
-                      const actionCell = row.insertCell(3);
-                      const approveButton = document.createElement('button');
-                      approveButton.textContent = 'Approve';
-                      approveButton.addEventListener('click', () => approveUser(user.id));
-                      actionCell.appendChild(approveButton);
-                      const rejectCell = row.insertCell(4);
-                      const rejectButton = document.createElement('button');
-                      rejectButton.textContent = 'Reject';
-                      rejectButton.addEventListener('click', () => rejectUser(user.id));
-                      actionCell.appendChild(rejectButton);
-                  });
-              }
-          });
-  }
+        function approveUser(userId) {
+            // Send a POST request to approve the user
+            fetch(`/api/approve_user/${userId}`, { method: 'POST' })
+                .then(response => {
+                    if (response.status === 200) {
+                        displayPendingUserApprovals();
+                        alert('User approved successfully');
+                    } else {
+                        alert('Failed to approve user');
+                    }
+                });
+        }
 
-  // Function to send an approval request for a user
-  function approveUser(userId) {
-      // Send a POST request to approve the user
-      fetch(`/api/approve_user/${userId}`, { method: 'POST' })
-          .then(response => {
-              if (response.status === 200) {
-                  // Display updated list of pending user approvals
-                  displayPendingUserApprovals();
-                  // Optionally, you can update the UI to indicate that the user has been approved
-                  alert('User approved successfully');
-              } else {
-                  alert('Failed to approve user');
-              }
-          });
-  }
+        function rejectUser(userId) {
+            // Send a POST request to reject the user
+            fetch(`/api/reject_user/${userId}`, { method: 'POST' })
+                .then(response => {
+                    if (response.status === 200) {
+                        displayPendingUserApprovals();
+                        alert('User rejected successfully');
+                    } else {
+                        alert('Failed to reject user');
+                    }
+                });
+        }
 
-  function rejectUser(userId) {
-      // Send a POST request to approve the user
-      fetch(`/api/reject_user/${userId}`, { method: 'POST' })
-          .then(response => {
-              if (response.status === 200) {
-                  // Display updated list of pending user approvals
-                  displayPendingUserApprovals();
-                  // Optionally, you can update the UI to indicate that the user has been approved
-                  alert('User removed successfully');
-              } else {
-                  alert('Failed to approve user');
-              }
-          });
-  }
+        function displayPendingFileDeletionApprovals() {
+            // Function to fetch and display pending file deletion approvals
+        }
 
-  //// Function to fetch and display pending file deletion approvals
-  //function displayPendingFileDeletionApprovals() {
-  //    fetch('/api/pending_deletion_requests')
-  //        .then(response => response.json())
-  //        .then(data => {
-  //            const pendingFileDeletionApprovals = document.getElementById('pendingFileDeletionApprovals');
-  //            pendingFileDeletionApprovals.innerHTML = ''; // Clear the existing content
-//
-  //            if (data.length === 0) {
-  //                const row = pendingFileDeletionApprovals.insertRow(0);
-  //                const cell = row.insertCell(0);
-  //                cell.colSpan = 5;
-  //                cell.textContent = 'No pending file deletion approvals.';
-  //            } else {
-  //                data.forEach(file => {
-  //                    const row = pendingFileDeletionApprovals.insertRow(pendingFileDeletionApprovals.rows.length);
-  //                    const fileNameCell = row.insertCell(0);
-  //                    fileNameCell.textContent = file.filename;
-  //                    const ownerCell = row.insertCell(1);
-  //                    ownerCell.textContent = file.owner;
-  //                    const permissionCell = row.insertCell(2);
-  //                    permissionCell.textContent = file.permission;
-  //                    const actionCell = row.insertCell(3);
-  //                    const approveButton = document.createElement('button');
-  //                    approveButton.textContent = 'Approve';
-  //                    approveButton.addEventListener('click', () => approveDeletion(file.file_id));
-  //                    actionCell.appendChild(approveButton);
-  //                });
-  //            }
-  //        });
-  //}
-//
-  //// Function to send an approval request for file deletion
-  //function approveDeletion(fileId) {
-  //    // Send a POST request to approve file deletion
-  //    fetch(`/api/approve_deletion/${fileId}`, { method: 'POST' })
-  //        .then(response => {
-  //            if (response.status === 200) {
-  //                // Display updated list of pending file deletion approvals
-  //                displayPendingFileDeletionApprovals();
-  //                // Optionally, you can update the UI to indicate that the deletion request has been approved
-  //                alert('Deletion request approved successfully');
-  //            } else {
-  //                alert('Failed to approve deletion request');
-  //            }
-  //        });
-  //}
-  // Initial display of pending approvals
-  displayPendingUserApprovals();
-  displayPendingFileDeletionApprovals();
+        function approveDeletion(fileId) {
+            // Function to approve file deletion
+        }
+
+        // Initial display of pending approvals
+        displayPendingUserApprovals();
+        displayPendingFileDeletionApprovals();
 
 
-  
-</script>
 
-</body>
-</html>
+    </script>

@@ -3,41 +3,91 @@
 
 <head>
   <title>Register</title>
-  <link rel="stylesheet" type="text/css" href="/static/css/main.css" />
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <!-- Replace with your local Bootstrap CSS link -->
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    .body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 40px;
+      border-radius: 0px;
+      padding-left: 30px;
+      padding-right: 30px;
+    }
+
+    .top_bar {
+      display: flex;
+      padding: 16px 40px;
+      justify-content: space-between;
+      align-items: center;
+      align-self: stretch;
+      border-radius: 0px;
+      border-bottom: 3px solid black;
+    }
+
+    .footer {
+      display: flex;
+      width: 500px;
+      padding: 16px 20px;
+      flex-direction: column;
+      justify-content: center;
+      align-items: flex-start;
+      gap: var(--spacing-s, 12px);
+      border-top: 1px solid var(--content-stroke, #E0E4F0);
+      background: var(--background-blue, #F7F8FA);
+
+    }
+  </style>
 </head>
 
 <body>
-  <div class="body">
-    <div class="loginForm">
-      <h1>Register</h1>
-      <div id="messages">
-        <p>{{message}}</p><br>
-        <p id="password-feedback"></p>
+  <div class="container">
+    <div class="body">
+      <div class="loginForm">
+        <div class="top_bar">
+          <h1>Register</h1>
+        </div>
+
+        <div id="messages">
+          <p>{{message}}</p><br>
+          <p id="password-feedback"></p>
+        </div>
+        <form id="registerForm" method="POST" action="/register">
+          <div class="form-group">
+            <input type="email" class="form-control" id="email" name="email" placeholder="Email" required />
+          </div>
+          <div class="form-group">
+            <input type="text" class="form-control" id="username" name="username" placeholder="Username" required />
+          </div>
+          <div class="form-group">
+            <input type="password" class="form-control" id="password" name="password" placeholder="Password" required />
+          </div>
+          <div class="form-group">
+            <input type="checkbox" id="showPassword" class="form-check-input" />
+            <label for="showPassword" class="form-check-label">Show Password</label>
+          </div>
+          <div class="form-group">
+            <input type="password" class="form-control" id="confirmPassword" name="confirm_password"
+              placeholder="Confirm Password" required />
+          </div>
+          <div class="form-group">
+            <select name="role" id="role" class="form-control">
+              <option value="exams">Examination officer</option>
+              <option value="admission">Admission officer</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <input type="submit" class="btn btn-primary" value="Register" />
+          </div>
+        </form>
       </div>
-      <form id="registerForm" method="POST" action="/register">
-        <input type="email" id="email" name="email" placeholder="email" required /><br />
-        <input type="text" id="username" name="username" placeholder="username" required /><br />
-        <input type="password" id="password" name="password" placeholder="password" required />
-        <br />
-        <input type="checkbox" id="showPassword" /><label for="showPassword">Show Password</label>
-        <br>
-        <input type="password" id="confirmPassword" name="confirm_password" placeholder="confirm password"
-          required /><br />
-        <br>
-        <select name="role" id="role">
-          <option value="exams">Examination officer</option>
-          <option value="admission">Admission officer</option>
-        </select>
-        <br>
-        <br>
-        <input type="submit" value="Register" />
-      </form>
-    </div>
-    <a href="/login">login??</a>
-    <div class="footer">
-      <h4>Secure file storage system @2023</h4>
+      <a href="/login">Already have an account??</a>
+      <div class="footer">
+        <h4>Secure file storage system @2023</h4>
+      </div>
     </div>
   </div>
   <script src="static/js/main.js"></script>

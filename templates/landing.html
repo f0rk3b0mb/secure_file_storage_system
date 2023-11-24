@@ -1,48 +1,79 @@
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/static/css/main.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <!-- Replace with your local Bootstrap CSS link -->
     <title>Welcome</title>
+    <style>
+        .body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 40px;
+            border-radius: 0px;
+            padding-left: 30px;
+            padding-right: 30px;
+        }
+
+        .top_bar {
+            display: flex;
+            padding: 16px 40px;
+            justify-content: space-between;
+            align-items: center;
+            align-self: stretch;
+            border-radius: 0px;
+            border-bottom: 5px solid black;
+        }
+
+        .mini_table {
+            max-width: 500px;
+            text-align: center;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .logo img {
+            width: 100px;
+            height: 100px;
+            margin-left: 50px;
+            border-radius: 30px;
+        }
+    </style>
 </head>
 
 <body>
-    <div class="body">
-        <div class="top_bar">
-            <h3>Welcome</h3>
-            <link_bar>
-                <a href="/login"><button>login</button></a>
-                <a href="/register"><button>register</button></a>
-                <a href="/faq"><button>help</button></a></button>
-            </link_bar>
-        </div>
-        <ul>
-            <center>
-                <h3>Secure File Storage system</h3>
-            </center>
-        </ul>
-        <center>
-            <div class="logo"><img src="/static/images/logo.png"></div>
-        </center>
-        <div class="mini_table">
-            <p>This is a system created to help Examination officers and Admission securely store files.
-
-                <br>
-                <br>
-
-                It stores files by encrypting them using AES (advanced encryption algorithm)
-                <br>
-                <br>
-                The system also created backups of files stored.
-                <br>
-                <br>
-                There is also a report generation for the system
-
-
-            </p>
+    <div class="container">
+        <div class="body">
+            <div class="top_bar">
+                <h3>Welcome</h3>
+                <div class="link_bar">
+                    <a href="/login" class="btn btn-primary">Login</a>
+                    <a href="/register" class="btn btn-secondary">Register</a>
+                    <a href="/faq" class="btn btn-info">Help</a>
+                </div>
+            </div>
+            <ul>
+                <center>
+                    <h3>Secure File Storage system</h3>
+                </center>
+            </ul>
+            <div>
+                <p>This is a system created to help Examination officers and Admission securely store files.
+                    <br><br>
+                    It stores files by encrypting them using AES (advanced encryption algorithm).
+                    <br><br>
+                    The system also creates backups of stored files.
+                    <br><br>
+                    There is also a report generation feature available in the system.
+                </p>
+            </div>
         </div>
     </div>
+    <script src="main.js"></script>
 </body>
 
 </html>

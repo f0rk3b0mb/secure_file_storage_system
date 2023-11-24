@@ -122,13 +122,15 @@ def admin():
 @api.route("/viewFiles")
 @login_required
 def viewFile():
-     # List files in the 'uploads' directory
-    upload_dir = 'uploads/'+session['username']
-    private_files = os.listdir(upload_dir)
-    public_dir = 'uploads/public'
-    public_files = os.listdir(public_dir)
+    # Fetch private files from the database for the current user
+    private_files = File.query.filter_by(owner_id=session["user_id"], permission_level="1" ,is_pending_deletion="False").all()
+    private_file_names = [file.file_name for file in private_files]
 
-    return jsonify({"private": private_files, "public": public_files})    ## fix display 
+    # Fetch public files from the database
+    public_files = File.query.filter_by(permission_level="2").all()
+    public_file_names = [file.file_name for file in public_files]
+
+    return jsonify({"private": private_file_names, "public": public_file_names})    ## fix display 
     
 
 @api.route("/addFiles", methods=['POST'])
@@ -171,24 +173,24 @@ def addFiles():
     return render_template("upload.html",status=sha256_hash)
     
 
-#@api.route("/deleteFiles", methods=["POST"])
-#@login_required
-#def delete_file():
-#    file_name = request.form.get("file_name")
-#
-#    if file_name:
-#        file_path = os.path.join("uploads", session["username"], file_name)
-#
-#        if os.path.exists(file_path):
-#            # Mark the file as pending for deletion in the database
-#            file = File.query.filter_by(file_name=file_name).first()
-#
-#            if file:
-#                file.is_pending_deletion = "True"
-#                db.session.commit()
-#                return "Deletion of file pending approval"
-#            else:
-#                return "File not found or could not be marked for deletion in the database"
+@api.route("/deleteFiles", methods=["POST"])
+@login_required
+def delete_file():
+    file_name = request.form.get("file_name")
+
+    if file_name:
+        file_path = os.path.join("uploads", session["username"], file_name)
+
+        if os.path.exists(file_path):
+            # Mark the file as pending for deletion in the database
+            file = File.query.filter_by(file_name=file_name).first()
+
+            if file:
+                file.is_pending_deletion = "True"
+                db.session.commit()
+                return "File will be archived"
+            else:
+                return "File not found or already archived"
 
 
 

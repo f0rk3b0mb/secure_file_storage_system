@@ -3,56 +3,105 @@
 
 <head>
   <title>Manage Files</title>
-  <link rel="stylesheet" type="text/css" href="/static/css/main.css" />
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <!-- Replace with your local Bootstrap CSS link -->
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    .body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--spacing-4xI, 40px);
+      border-radius: var(--corner-radius-none, 0px);
+      padding-left: 30px;
+      padding-right: 30px;
+
+    }
+
+    .top_bar {
+      display: flex;
+      padding: 16px 40px;
+      justify-content: space-between;
+      align-items: center;
+      align-self: stretch;
+      border-radius: var(--corner-radius-none, 0px);
+      border-bottom: 1px solid var(--content-stroke, #E0E4F0);
+      border-width: 5px;
+      border-color: black;
+    }
+
+    .footer {
+      display: flex;
+      width: 500px;
+      padding: 16px 20px;
+      flex-direction: column;
+      justify-content: center;
+      align-items: flex-start;
+      gap: var(--spacing-s, 12px);
+      border-top: 1px solid var(--content-stroke, #E0E4F0);
+      background: var(--background-blue, #F7F8FA);
+
+    }
+  </style>
 </head>
 
 <body>
-  <div class="body">
-    <div class="top_bar">
-      <h3>Manage Files</h3>
-      <a href="/admin">admin</a>
-    </div>
-    <br>
-    <br>
+  <div class="container">
+    <div class="body">
+      <div class="top_bar">
+        <h3>Manage Files</h3>
+        <a href="/admin" class="btn btn-primary">Admin</a>
+        <!-- Converted the link to a Bootstrap button -->
+      </div>
+      <br>
+      <br>
 
-    <input type="text" id="searchInput" class="search" placeholder="Search for file...">
+      <div class="input-group mb-3">
+        <input type="text" id="searchInput" class="form-control" placeholder="Search for file...">
+      </div>
 
-    <table border="1" id="fileTable">
-      <thead>
-        <tr>
-          <th>File Name</th>
-          <th>sha256sum</th>
-          <th>owner_id</th>
-          <th>upload_date</th>
-          <th>deletion_status</th>
-          <th>permission_level</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for file in files %}
-        <tr>
-          <td>{{ file.file_name }}</td>
-          <td>{{ file.sha256sum }}</td>
-          <td>{{ file.owner_id }}</td>
-          <td>{{ file.upload_date }}</td>
-          <td>{{ file.is_pending_deletion }}</td>
-          <td>{{ file.permission_level }}</td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
+      <table class="table table-bordered">
+        <thead class="thead-dark">
+          <tr>
+            <th>File Name</th>
+            <th>sha256sum</th>
+            <th>owner_id</th>
+            <th>upload_date</th>
+            <th>deletion_status</th>
+            <th>permission_level</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for file in files %}
+          <tr>
+            <td>{{ file.file_name }}</td>
+            <td>{{ file.sha256sum }}</td>
+            <td>{{ file.owner_id }}</td>
+            <td>{{ file.upload_date }}</td>
+            <td>{{ file.is_pending_deletion }}</td>
+            <td>{{ file.permission_level }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
 
-    <div class="footer">
-      <h4>Secure file storage system @2023</h4>
+      <div class="footer">
+        <h4>Secure file storage system @2023</h4>
+      </div>
     </div>
   </div>
 
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <!-- jQuery -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+  <!-- Popper.js -->
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <!-- Bootstrap JavaScript -->
   <script>
-    document.getElementById('searchInput').addEventListener('keyup', function () {
+    document.getElementById('searchInput').addEventListener('input', function () {
       const searchText = this.value.toUpperCase();
-      const rows = document.querySelectorAll('#fileTable tbody tr');
+      const rows = document.querySelectorAll('#userTable tbody tr');
 
       rows.forEach(row => {
         let found = false;
