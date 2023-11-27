@@ -1,3 +1,27 @@
+// Get references to the password and confirm password fields
+const passwordField = document.getElementById('password');
+const confirmPasswordField = document.getElementById('confirmPassword');
+const passwordFeedback = document.getElementById('password-feedback');
+
+// Function to check if the passwords match
+function validatePassword() {
+    const password = passwordField.value;
+    const confirmPassword = confirmPasswordField.value;
+
+    if (password === confirmPassword) {
+        passwordFeedback.textContent = 'Passwords match';
+        passwordFeedback.style.color = 'green';
+    } else {
+        passwordFeedback.textContent = 'Passwords do not match';
+        passwordFeedback.style.color = 'red';
+    }
+}
+
+// Event listener to check password on input
+confirmPasswordField.addEventListener('input', validatePassword);
+
+
+
 document.addEventListener("DOMContentLoaded", function () {
     const passwordInput = document.getElementById("password");
     const showPasswordCheckbox = document.getElementById("showPassword");
@@ -65,3 +89,5 @@ function hide(element) {
     element.style.height = "50px"; // Reset the height
     answer.hidden = true;
 }
+
+
