@@ -142,7 +142,7 @@
                     <div class="tabs">
                         <!-- Bootstrap-styled buttons -->
                         <button class="btn btn-primary tab_item" id="showUsers">Pending User Approvals</button>
-                        <button class="btn btn-primary tab_item" id="showFiles">Pending File Approvals</button>
+                        <button class="btn btn-primary tab_item" id="showFiles">Archived files</button>
                     </div>
 
                     <!-- Table section -->
@@ -316,11 +316,51 @@
         }
 
         function displayPendingFileDeletionApprovals() {
-            // Function to fetch and display pending file deletion approvals
+            fetch('/api/archived_files')
+                .then(response => response.json())
+                .then(data => {
+                    const pendingFileDeletionApprovals = document.getElementById('pendingFileDeletionApprovals');
+                    pendingFileDeletionApprovals.innerHTML = ''; // Clear the existing content
+
+                    if (data.length === 0) {
+                        const row = pendingFileDeletionApprovals.insertRow(0);
+                        const cell = row.insertCell(0);
+                        cell.colSpan = 5;
+                        cell.textContent = 'No archived files';
+                    } else {
+                        data.forEach(file => {
+                            const row = pendingFileDeletionApprovals.insertRow(pendingFileDeletionApprovals.rows.length);
+                            const fileNameCell = row.insertCell(0);
+                            fileNameCell.textContent = file.filename;
+                            const ownerCell = row.insertCell(1);
+                            ownerCell.textContent = file.owner;
+                            const permissionCell = row.insertCell(2);
+                            permissionCell.textContent = file.permission;
+                            const actionCell = row.insertCell(3);
+                            const approveButton = document.createElement('button');
+                            approveButton.textContent = 'Restore';
+                            approveButton.className = 'btn btn-success mx-1';
+                            approveButton.addEventListener('click', () => approveDeletion(file.file_id));
+                            actionCell.appendChild(approveButton);
+                        });
+                    }
+                });
         }
 
+        // Function to send an approval request for file deletion
         function approveDeletion(fileId) {
-            // Function to approve file deletion
+            // Send a POST request to approve file deletion
+            fetch(`/api/restore_file/${fileId}`, { method: 'POST' })
+                .then(response => {
+                    if (response.status === 200) {
+                        // Display updated list of pending file deletion approvals
+                        displayPendingFileDeletionApprovals();
+                        // Optionally, you can update the UI to indicate that the deletion request has been approved
+                        alert('File restored to system succesfully');
+                    } else {
+                        alert('Failed to restore file');
+                    }
+                });
         }
 
         // Initial display of pending approvals

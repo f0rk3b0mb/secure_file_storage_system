@@ -264,45 +264,38 @@ def get_pending_users():
     # Return the pending user details in JSON format using jsonify
     return jsonify(pending_user_details)
 
-#@api.route("/pending_deletion_requests", methods=["GET"])
-#@admin_required
-#def get_pending_deletion_requests():
-#    # Find all files that are pending deletion
-#    pending_deletion_files = File.query.filter_by(is_pending_deletion="True").all()
-#    
-#    pending_files_details = []
-#
-#    for file in pending_deletion_files:
-#        file_detail = {
-#            'file_id': file.id,
-#            'filename': file.file_name,
-#            'owner': file.owner_id,
-#            'permission': file.permission_level,
-#        }
-#        pending_files_details.append(file_detail)
-#    
-#    return jsonify(pending_files_details)
-#
-#
-#@api.route("/approve_deletion/<string:file_id>", methods=["POST"])
-#@admin_required
-#def approve_deletion(file_id):
-#    # Find the file by name
-#    file = File.query.filter_by(id=file_id).first()
-#
-#    if file and file.is_pending_deletion:
-#        
-#        os.remove(file.file_path)
-#
-#        # Delete the file record from the database
-#        db.session.delete(file)
-#        db.session.commit()
-#
-#        return jsonify({"message": "File deleted and record removed."})
-#    else:
-#        return jsonify({"message": "File not found or not pending deletion."})
-#
-#
+@api.route("/archived_files", methods=["GET"])
+@admin_required
+def get_archived_requests():
+    # Find all files that are pending deletion
+    pending_deletion_files = File.query.filter_by(is_pending_deletion="True").all()
+    
+    pending_files_details = []
+
+    for file in pending_deletion_files:
+        file_detail = {
+            'file_id': file.id,
+            'filename': file.file_name,
+            'owner': file.owner_id,
+            'permission': file.permission_level,
+        }
+        pending_files_details.append(file_detail)
+    
+    return jsonify(pending_files_details)
+
+
+@api.route("/restore_file/<int:file_id>", methods=["POST"])
+@admin_required
+def restore_file(file_id):
+    # Find the file by name
+    file = File.query.filter_by(id=file_id).first()
+
+    if file and file.is_pending_deletion:
+        file.is_pending_deletion = "False"
+        db.session.commit()
+        return jsonify({"message": "File Restored to system"})
+    else:
+        return jsonify({"message": "File not found or not archived."})
 
 
 @api.route('/approve_user/<int:user_id>', methods=['POST'])
