@@ -104,7 +104,7 @@
         <div class="link_bar mt-4">
           <div class="list-group">
             <a href="/upload" class="list-group-item list-group-item-action">Upload Files</a>
-            <a href="/faq" class="list-group-item list-group-item-action">Help</a>
+            <a href="/faq" class="list-group-item list-group-item-action">faq & user_manual</a>
             <a href="/logout" class="list-group-item list-group-item-action">Logout</a>
           </div>
         </div>
@@ -205,7 +205,7 @@
 
       const deleteButton = document.createElement("button");
       deleteButton.classList.add("btn", "btn-danger");
-      deleteButton.textContent = "Delete";
+      deleteButton.textContent = "Archive";
 
       deleteButton.addEventListener('click', function () {
         fetch('/api/deleteFiles', {

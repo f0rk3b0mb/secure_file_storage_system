@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, redirect, url_for, request, session ,jsonify , make_response
 import os
-from database import db, bcrypt , User , File , Backups
+from database import db, bcrypt , User , File , Backups, Role , Permission
 from utils import calculate_sha256, encrypt_file , decrypt_file , login_required , admin_required
 import datetime
 from  report_generator import generate_files_report, generate_users_report , generate_backups_report
@@ -52,8 +52,8 @@ def login():
                 if bcrypt.check_password_hash(user.password, password):
                     session["user_id"] = user.id
                     session["username"] = user.username
-                    session["role"] = user.role
-                    if user.role == "admin":
+                    session["role"] = user.role_id
+                    if user.role_id == 1:
                         return redirect(url_for("web.admin"))
                     else:
                         return redirect(url_for("web.dashboard"))  # Redirect to the profile route
@@ -89,7 +89,7 @@ def register():
         else:
             # Hash the password and create a new user
             hashed_password = bcrypt.generate_password_hash(password).decode("utf-8")
-            new_user = User(username=username, password=hashed_password , email=email, role=role, is_approved="False", date_registered=datetime.date.today())
+            new_user = User(username=username, password=hashed_password , email=email, role_id=role, is_approved="False", date_registered=datetime.date.today())
             db.session.add(new_user)
             db.session.commit()
             return render_template("login.html", message="Await admin approval") # Redirect to the login route
@@ -249,6 +249,7 @@ def download_public_file(file_name):
 def get_pending_users():
     # Query the database to get pending user registrations
     pending_users = User.query.filter_by(is_approved="False").all()
+    print(pending_users)
     # Create a list to store user details
     pending_user_details = []
 
@@ -257,8 +258,13 @@ def get_pending_users():
             'id': user.id,
             'username': user.username,
             'email': user.email,
-            'role': user.role,
+            'role': None
         }
+        if user.role_id:
+            role = Role.query.get(user.role_id)
+            if role:
+                user_detail['role'] = role.role_name
+
         pending_user_details.append(user_detail)
 
     # Return the pending user details in JSON format using jsonify
@@ -277,8 +283,12 @@ def get_archived_requests():
             'file_id': file.id,
             'filename': file.file_name,
             'owner': file.owner_id,
-            'permission': file.permission_level,
+            'permission': None
         }
+        if file.permission_level:
+            perm = Permission.query.get(file.permission_level)
+            if perm:
+                file_detail['permission'] = perm.permission
         pending_files_details.append(file_detail)
     
     return jsonify(pending_files_details)

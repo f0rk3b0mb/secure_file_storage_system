@@ -9,7 +9,7 @@ class User(db.Model):
     username = db.Column(db.String(50), unique=True, nullable=False)
     password = db.Column(db.String(60), nullable=False)
     email= db.Column(db.String(50))
-    role = db.Column(db.String(50))
+    role_id = db.Column(db.Integer, nullable=False)
     is_approved= db.Column(db.String(10))
     date_registered = db.Column(db.String(20))
 
@@ -38,5 +38,7 @@ class Permission(db.Model):
     id = db.Column(db.Integer, db.ForeignKey('file.permission_level'), primary_key=True)
     permission = db.Column(db.String(255), nullable=False)
 
-
+class Role(db.Model):
+    id = db.Column(db.Integer, db.ForeignKey('user.role_id'), primary_key=True)
+    role_name = db.Column(db.String(255), nullable=False)
 
