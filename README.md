@@ -63,9 +63,17 @@ The report generation feature is usng python reportlab module.
 
 The system supports https protocol by using an reverse proxy. This feature can be accessed when you build the docker container.
 
+#### todo
+
+- [x] fix security vulnerabilities
+- [x] create a  separate dontainer for the nginx
+- [x] mount volumes to the container to store fils
+- [x] add more functionality  
+
 ### Outro
 
 
 I am proud that i was able to learn new things when creating this system. I should prolly try and ensure i fix obvious security issues in the code. It isnt the most secure from a cybersecurity guys perspective :).
 Feel free to play around with it.
+
 
