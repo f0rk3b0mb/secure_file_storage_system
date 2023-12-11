@@ -79,15 +79,15 @@
         }
 
         .logo img {
-            width: 100px;
-            height: 100px;
+            width: 150px;
+            height: 150px;
             border-radius: 30px;
             margin-left: 100px;
+            padding-top: 15px;
         }
 
         .logo {
             display: flex;
-            width: 400px;
             height: 150px;
             align-items: center;
             border-radius: var(--corner-radius-none, 0px);
@@ -303,16 +303,34 @@
         }
 
         function rejectUser(userId) {
-            // Send a POST request to reject the user
-            fetch(`/api/reject_user/${userId}`, { method: 'POST' })
-                .then(response => {
-                    if (response.status === 200) {
-                        displayPendingUserApprovals();
-                        alert('User rejected successfully');
-                    } else {
+            var reason = prompt("Reason for rejecting?");
+            if (reason) { // Check if a reason was provided
+                var requestData = {
+                    rejectionReason: reason
+                };
+
+                fetch(`/api/reject_user/${userId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(requestData)
+                })
+                    .then(response => {
+                        if (response.status === 200) {
+                            displayPendingUserApprovals();
+                            alert('User rejected successfully');
+                        } else {
+                            alert('Failed to reject user');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
                         alert('Failed to reject user');
-                    }
-                });
+                    });
+            } else {
+                alert('Please provide a reason for rejecting the user.');
+            }
         }
 
         function displayPendingFileDeletionApprovals() {

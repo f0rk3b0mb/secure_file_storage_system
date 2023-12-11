@@ -9,16 +9,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
     /* Add custom styles here */
-    .logo {
-      display: flex;
-      width: 240px;
-      height: 64px;
-      padding: 20px;
-      align-items: center;
-      gap: var(--spacing-s, 12px);
-      flex-shrink: 0;
-      border-radius: var(--corner-radius-none, 0px);
-    }
 
     .side_bar {
       display: flex;
@@ -79,15 +69,15 @@
     }
 
     .logo img {
-      width: 100px;
-      height: 100px;
+      width: 150px;
+      height: 150px;
       border-radius: 30px;
       margin-left: 100px;
+      padding-top: 15px;
     }
 
     .logo {
       display: flex;
-      width: 400px;
       height: 150px;
       align-items: center;
       border-radius: var(--corner-radius-none, 0px);
@@ -100,7 +90,7 @@
     <div class="row">
       <div class="side_bar col-md-3">
         <!-- Side bar -->
-        <div class="logo"><img src="/static/images/logo.png"></div>
+        <div class="logo"><img src="/static/images/logo.png" class="img-fluid" alt="Logo"></div>
         <div class="link_bar mt-4">
           <div class="list-group">
             <a href="/upload" class="list-group-item list-group-item-action">Upload Files</a>

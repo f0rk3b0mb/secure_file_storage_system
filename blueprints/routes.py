@@ -79,13 +79,13 @@ def register():
         #remove bad characters
         for i in ["{","}","(",")","<",">","/","\\"]:
             if i in username:
-                return render_template("register.html",message="Illegal chracters in username")
+                return render_template("register.html",message="Illegal characters in username")
 
 
         # Check if the username is already taken
         existing_user = User.query.filter_by(email=email).first()
         if existing_user:
-            return render_template("register.html",message="Username already taken. Please choose another username.")
+            return render_template("register.html",message="Username already taken.")
         else:
             # Hash the password and create a new user
             hashed_password = bcrypt.generate_password_hash(password).decode("utf-8")
@@ -249,7 +249,6 @@ def download_public_file(file_name):
 def get_pending_users():
     # Query the database to get pending user registrations
     pending_users = User.query.filter_by(is_approved="False").all()
-    print(pending_users)
     # Create a list to store user details
     pending_user_details = []
 
@@ -335,8 +334,12 @@ def reject_user(user_id):
     if request.method == 'POST':
         # Find the user by ID
         user = User.query.get(user_id)
+        rejection_reason = request.json.get('rejectionReason')
         
-        if user:
+        if user: 
+            reasons_file_path = os.path.join('logs', 'rejection_reasons.log')
+            with open(reasons_file_path, 'a') as reasons_file:
+                reasons_file.write(f"Username: {user.username}, Email: {user.email}, Reason: {rejection_reason}\n")
             db.session.delete(user)
             db.session.commit()
             return jsonify({'message': 'User has been removed'}), 200
@@ -432,6 +435,7 @@ def generate_report():
 
 ##backup
 
+## works on linux only
 @web.route("/backup",methods=["GET"])
 @admin_required
 def create_backup():
