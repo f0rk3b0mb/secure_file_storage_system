@@ -12,6 +12,7 @@ class User(db.Model):
     role_id = db.Column(db.Integer, nullable=False)
     is_approved= db.Column(db.String(10))
     date_registered = db.Column(db.String(20))
+    otp= db.Column(db.Integer)
 
 class File(db.Model):
     id = db.Column(db.Integer, primary_key=True)

@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, redirect, url_for, request, session ,jsonify , make_response
 import os
 from database import db, bcrypt , User , File , Backups, Role , Permission
-from utils import calculate_sha256, encrypt_file , decrypt_file , login_required , admin_required
+from utils import calculate_sha256, encrypt_file , decrypt_file , login_required , generate_otp, admin_required
 import datetime
 from  report_generator import generate_files_report, generate_users_report , generate_backups_report
 import subprocess
@@ -50,13 +50,15 @@ def login():
             # Check if the user is approved
             if user.is_approved == "True":
                 if bcrypt.check_password_hash(user.password, password):
+                    otp_code = generate_otp()
+                    user.otp = otp_code
+                    print(otp_code)
+                    db.session.commit()
                     session["user_id"] = user.id
                     session["username"] = user.username
                     session["role"] = user.role_id
-                    if user.role_id == 1:
-                        return redirect(url_for("web.admin"))
-                    else:
-                        return redirect(url_for("web.dashboard"))  # Redirect to the profile route
+                    if otp_code:
+                        return redirect(url_for("web.verify_otp"))
                 else:
                     return render_template("login.html", message="Incorrect username or password")
             else:
@@ -66,6 +68,29 @@ def login():
 
     return render_template("login.html")
 
+
+@web.route("/verify_otp", methods=["GET", "POST"])
+def verify_otp():
+    if request.method == "POST":
+        entered_otp = request.form.get("otp")  # Get the OTP entered by the user
+
+        # Here, retrieve the previously generated OTP for the user from the session or database
+        # For demonstration purposes, let's assume the generated OTP is stored in the session
+        #generated_otp = session.get("generated_otp")
+        user = User.query.get(session.get('user_id'))
+        print(entered_otp)
+        print(user.otp)
+
+        if int(entered_otp) == user.otp:
+            if user.role_id == 1:
+                return redirect(url_for("web.dashboard"))
+            else:
+                return redirect(url_for("web.dashboard"))  # Redirect to the dashboard or encrypted files page
+        else:
+            # Incorrect OTP, display an error message
+            return render_template("verify_otp.html", message="Incorrect OTP. Please try again.")
+
+    return render_template("verify_otp.html")
 
 @web.route("/register", methods=["GET", "POST"])
 def register():

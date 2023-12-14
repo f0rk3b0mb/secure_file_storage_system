@@ -6,6 +6,7 @@ from flask import make_response
 from functools import wraps
 from flask import session, redirect, url_for
 from database import User
+import pyotp
 
 
 # encryptor
@@ -100,5 +101,14 @@ def admin_required(func):
         return func(*args, **kwargs)
     return decorated_function
 
-def backup():
-    print("backup")
+def generate_otp():
+    # Replace this with your secret key used for OTP generation
+    secret_key = 'O7MFA6FW4HJAUT44' # store in environ
+
+    # Create a TOTP object using the secret key and the user's email
+    totp = pyotp.TOTP(secret_key)
+
+    # Generate the OTP
+    otp_code = totp.now()
+
+    return otp_code
