@@ -1,4 +1,4 @@
 hasher.py
-https_certs/
+https_certs/*.pem
 .env
 __pycache__/
