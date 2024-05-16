@@ -66,9 +66,8 @@ The system supports https protocol by using an reverse proxy. This feature can b
 #### todo
 
 - [x] fix security vulnerabilities
-- [x] create a  separate dontainer for the nginx
-- [x] mount volumes to the container to store fils
-- [x] add more functionality  
+- [x] create a  separate container for the nginx
+- [x] mount volumes to the container to store files  
 
 ### Outro
 

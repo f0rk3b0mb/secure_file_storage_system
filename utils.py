@@ -12,7 +12,7 @@ import pyotp
 # encryptor
 # Generate a random encryption key (you should keep this key secret)
 #SECRET_KEY = Fernet.generate_key()
-SECRET_KEY = "2yMmcrPl1qOwX71EepqnyzW1jdy5gPdL6ddF5UcMABY=" # secret should be stored in environ
+SECRET_KEY = os.environ['ENCRYPTION_SECRET_KEY'] # secret should be stored in environ
 cipher_suite = Fernet(SECRET_KEY)
 
 def encrypt_file(file_path):
@@ -103,7 +103,7 @@ def admin_required(func):
 
 def generate_otp():
     # Replace this with your secret key used for OTP generation
-    secret_key = 'O7MFA6FW4HJAUT44' # store in environ
+    secret_key = os.environ['OTP_SECRET_KEY'] # store in environ
 
     # Create a TOTP object using the secret key and the user's email
     totp = pyotp.TOTP(secret_key)

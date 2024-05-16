@@ -74,18 +74,14 @@ def verify_otp():
     if request.method == "POST":
         entered_otp = request.form.get("otp")  # Get the OTP entered by the user
 
-        # Here, retrieve the previously generated OTP for the user from the session or database
-        # For demonstration purposes, let's assume the generated OTP is stored in the session
-        #generated_otp = session.get("generated_otp")
+        # For demonstration purposes, let's assume the generated OTP is stored in the db
         user = User.query.get(session.get('user_id'))
-        print(entered_otp)
-        print(user.otp)
 
         if int(entered_otp) == user.otp:
             if user.role_id == 1:
                 return redirect(url_for("web.dashboard"))
             else:
-                return redirect(url_for("web.dashboard"))  # Redirect to the dashboard or encrypted files page
+                return redirect(url_for("web.dashboard")) 
         else:
             # Incorrect OTP, display an error message
             return render_template("verify_otp.html", message="Incorrect OTP. Please try again.")
