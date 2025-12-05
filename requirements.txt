@@ -2,7 +2,7 @@ bcrypt==4.1.1
 blinker==1.7.0
 cffi==1.16.0
 click==8.1.7
-cryptography==41.0.7
+cryptography==42.0.0
 Flask==3.0.0
 Flask-Bcrypt==1.0.1
 Flask-SQLAlchemy==3.1.1
@@ -17,3 +17,4 @@ SQLAlchemy==2.0.23
 typing_extensions==4.8.0
 Werkzeug==3.0.1
 pyotp==2.9.0
+zipp>=3.19.1 # not directly required, pinned by Snyk to avoid a vulnerability
